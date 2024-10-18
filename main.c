@@ -193,7 +193,7 @@ int main() {
     // get now time with milliseconds
     start_tick = GetTickCount64();
     system("chcp 65001");
-    system("mode con cols=160 lines=44 | title \"C-RPG | FPS : 999\"");
+    system("mode con cols=160 lines=43 | title \"C-RPG | FPS : 999\"");
     for (int i = 0; i <= getConsoleSize().x; i++) {
         gotoXY(i, getUseableConsoleHeight() + 1);
         printf("-");
