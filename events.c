@@ -27,6 +27,8 @@ void secret_code_runner(int* pass, int enter, int size) {
     }
 }
 
+int animation_pakts = 0;
+int local_ticks_pakts = 0; // 64tick = 1sec
 void intro() {
     switch (now_ticks) {
         case 1000:
@@ -59,7 +61,18 @@ void intro() {
             printfInInformationBox(1, "게임을 시작할 준비가 되었습니다.");
             break;
         default:
-            // Handle unexpected values if necessary
+            if (now_ticks > 13000) {
+                local_ticks_pakts++;
+                if (animation_pakts == 0 && local_ticks_pakts == 32) {
+                    printfCenter(31, "                       ");
+
+                    animation_pakts = 1;
+                } else if (animation_pakts == 1 && local_ticks_pakts == 64) {
+                    printfCenter(31, "Press any key to start.");
+                    animation_pakts = 0;
+                    local_ticks_pakts = 0;
+                }
+            }
             break;
     }
 }
