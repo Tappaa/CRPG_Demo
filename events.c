@@ -1,10 +1,31 @@
+#include "libs/system.h"
+
 extern unsigned long long now_ticks;
-extern void printfXY(int x, int y, const char* format, ...);
-extern void printfCenter(int y, const char* format, ...);
-extern void clearConsoleLines(int start_y, int end_y);
-extern int getUseableConsoleHeight();
-extern void printfInInformationBox(int level, const char* format, ...);
 // extern
+
+int cheat_mode = 0;
+void secret_code_runner(int* pass, int enter, int size) {
+    // already enabled
+    if (cheat_mode == 1) return;
+
+    // lowercase
+    if (enter >= 97 && enter <= 122) enter -= 32;
+    // insert 0 index
+    int temp = enter, temp2;
+    for (int i = 0; i <= size; i++) {
+        temp2 = pass[i];
+        pass[i] = temp;
+        temp = temp2;
+//        printf("%d\t", pass[i]);
+    }
+    //printf("\n");
+    // U D U D L R L R B A
+    // A B R L R L D U D U
+    if (pass[0] == KEY_A && pass[1] == KEY_B && pass[2] == KEY_RIGHT && pass[3] == KEY_LEFT && pass[4] == KEY_RIGHT && pass[5] == KEY_LEFT && pass[6] == KEY_DOWN && pass[7] == KEY_UP && pass[8] == KEY_DOWN && pass[9] == KEY_UP) {
+        cheat_mode = 1;
+        printfInInformationBox(0, "[!] 치트모드가 활성화 되었습니다. [%d]", cheat_mode);
+    }
+}
 
 void intro() {
     switch (now_ticks) {

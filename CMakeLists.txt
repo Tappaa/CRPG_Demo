@@ -4,4 +4,6 @@ project(CRPG_Demo C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(CRPG_Demo main.c
-        events.c)
+        events.c
+        libs/system.h
+        libs/system.c)
