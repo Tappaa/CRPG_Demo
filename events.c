@@ -84,12 +84,12 @@ void intro() {
 
                     // draw buttons
                     printfCenter(30, "---------------");
-                    printfXY(getPrintCenter("    |  게임 시작  |").x, 31, "    |  ");
+                    printfXY(getPrintCenter("|  게임 시작  |").x, 31, "|  ");
                     setColor(WHITE, BLACK);
                     printf("게임 시작");
                     setColor(BLACK, WHITE);
                     printf("  |");
-                    printfCenter(32, "    |  게임 종료  |");
+                    printfCenter(32, "|  게임 종료  |");
                     printfCenter(33, "---------------");
                 }
             }
@@ -119,15 +119,15 @@ void start_screen_button() {
 
         // draw buttons
         if (start_screen_button__selected == 0) {
-            printfXY(getPrintCenter("    |  게임 시작  |").x, 31, "    |  ");
+            printfXY(getPrintCenter("|  게임 시작  |").x, 31, "|  ");
             setColor(WHITE, BLACK);
             printf("게임 시작");
             resetColor();
             printf("  |");
-            printfCenter(32, "    |  게임 종료  |");
+            printfCenter(32, "|  게임 종료  |");
         } else if (start_screen_button__selected == 1) {
-            printfCenter(31, "    |  게임 시작  |");
-            printfXY(getPrintCenter("    |  게임 종료  |").x, 32, "    |  ");
+            printfCenter(31, "|  게임 시작  |");
+            printfXY(getPrintCenter("|  게임 종료  |").x, 32, "|  ");
             setColor(WHITE, BLACK);
             printf("게임 종료");
             resetColor();
@@ -151,40 +151,65 @@ void start_screen_button() {
 
 int story__animation = 0;
 int story__local_ticks = 0;
+int story__page = 0;
 int story__dead = 0;
 void story() {
     if (start_screen_button__dead == 1) {
         story__local_ticks++;
 
-        switch (story__local_ticks) {
-            case 64:
-                printfCenter(13, "대충 스토리 설명");
-                break;
-            case 320:
-                clearConsoleLines(13, 13);
-                printfCenter(13, "조작키");
-                printfCenter(14, "↑, ↓, ←, → : 이동");
-                printfCenter(15, "Enter : 확인");
-                printfCenter(16, "ESC : 뒤로가기, 메뉴");
-                printfCenter(17, "\\ : ????");
-                break;
-            default:
-                if (story__local_ticks > 320) {
-                    if (story__animation == 0 && story__local_ticks == 352) {
+        switch (story__page) {
+            case 0:
+                if (story__local_ticks == 64) {
+                    printfCenter(13, "옛날 옛적, 한 작은 마을에 \"슬라임 퇴치 전문가\"라는 직업을 가진 평범한 청년, 렌이 살고 있었다.");
+                    printfCenter(14, "렌은 보통 마을 주변을 돌아다니며 물컹물컹한 슬라임들을 잡는 일을 했다.");
+                    printfCenter(15, "누구에게나 무난히 깔끔하게 치우는 슬라임 청소부 역할이었지만, 늘 뭔가 더 큰 일을 해보고 싶다는 마음이 있었다.");
+
+                    printfCenter(17, "어느 날, 마을에 소문이 돌았다.");
+                    printfCenter(18, "\"마왕이 되살아나 세상을 어둠에 물들이려 한다!\" 마왕이 있는 곳은 험준한 산의 정상, 고대의 성채라 했다.");
+                    printfCenter(19, "렌은 용기를 내어, 단단히 준비한 자신의 무기와 함께 길을 나섰다.");
+                } else if (story__local_ticks > 64) {
+                    if (story__animation == 0 && story__local_ticks == 96) {
                         clearConsoleLines(31, 31);
                         story__animation = 1;
-                    } else if (story__animation == 1 && story__local_ticks == 384) {
-                        printfCenter(31, "Press any key to start.");
+                    } else if (story__animation == 1 && story__local_ticks == 128) {
+                        printfCenter(31, "Press any key to continue.");
                         story__animation = 0;
-                        story__local_ticks = 320;
+                        story__local_ticks = 64;
                     }
 
                     if (keyData.isPressed == 1) {
-                        story__dead = 1;
-                        clearConsoleLines(0, getUseableConsoleHeight());
+                        story__page++;
+                        story__local_ticks = 0;
+                        clearConsoleLines(13, 31);
 
                     }
                 }
+                break;
+            case 1:
+                if (story__local_ticks == 64) {
+                    printfCenter(13, "조작키");
+                    printfCenter(14, "↑, ↓, ←, → : 이동");
+                    printfCenter(15, "Enter : 확인");
+                    printfCenter(16, "ESC : 뒤로가기, 메뉴");
+                    printfCenter(17, "\\ : ????");
+                } else if (story__local_ticks > 64) {
+                    if (story__animation == 0 && story__local_ticks == 96) {
+                        clearConsoleLines(31, 31);
+                        story__animation = 1;
+                    } else if (story__animation == 1 && story__local_ticks == 128) {
+                        printfCenter(31, "Press any key to start.");
+                        story__animation = 0;
+                        story__local_ticks = 64;
+                    }
+
+                    if (keyData.isPressed == 1) {
+                        story__page++;
+                        story__local_ticks = 0;
+                        clearConsoleLines(13, 31);
+                    }
+                }
+                break;
+            default:
                 break;
         }
     }
