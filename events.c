@@ -98,7 +98,7 @@ void intro() {
 }
 
 int start_screen_button__selected = 0;
-int start_screen_button__selected__local_ticks = 0;
+int start_screen_button__selected__local_ticks = 16;
 int start_screen_button__dead = 0;
 void start_screen_button() {
     if (intro__dead == 1) {
@@ -135,7 +135,7 @@ void start_screen_button() {
         }
 
         // button click
-        if (keyData.key == KEY_ENTER && keyData.isPressed == 1) {
+        if (keyData.key == KEY_ENTER && keyData.isPressed == 1 && start_screen_button__selected__local_ticks == 0) {
             if (start_screen_button__selected == 0) {
                 printfInInformationBox(1, "게임을 시작합니다.");
 
