@@ -8,11 +8,17 @@
 #define KEY_A 65
 #define KEY_B 66
 #define KEY_CHEAT_MODE 92
+#define KEY_NULL 0
 /* in game inputs */
 
 struct Point {
     int x;
     int y;
+};
+
+struct Key {
+    int key;
+    int isPressed;
 };
 
 enum ColorType{
@@ -37,8 +43,13 @@ enum ColorType{
 void gotoXY(int x, int y);
 struct Point getConsoleSize();
 struct Point getCursorPos();
+void setCursorVisibility(int isVisible);
 void setTextColor(int colorNum);
+void setColor(int backgroundColor, int textColor);
+void resetColor();
+
 int getUseableConsoleHeight();
+struct Point getPrintCenter(char *str, ...);
 void printfCenter(int y, char* str, ...);
 void printfXY(int x, int y, char* str, ...);
 void clearConsoleLines(int start_y, int end_y);

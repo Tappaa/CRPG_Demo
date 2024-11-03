@@ -6,12 +6,31 @@
 struct Point con_size;
 
 extern int cheat_mode;
+extern int intro__dead;
+extern int start_screen_button__dead;
+extern int story__dead;
 unsigned long long start_tick;
 unsigned long long now_ticks;
 
+int exit_game = 0;
+
+struct Key keyData;
+
+void ExitGame() {
+    exit_game = 1;
+}
+
 extern void secret_code_runner(int* pass, int enter, int size);
 extern void intro();
+extern void start_screen_button();
+extern void story();
 int main() {
+    // get console window handle
+    HWND hwnd = GetConsoleWindow();
+
+    // hide cursor
+    setCursorVisibility(0);
+
     // get now time with milliseconds
     start_tick = GetTickCount64();
     system("chcp 65001");
@@ -25,10 +44,12 @@ int main() {
     // do not change console size
     printfInInformationBox(3, "[경고] 콘솔창 크기를 변경하지 마세요. (변경시 프로그램이 종료됩니다)");
 
-    int key;
-    int secret[10] = { 0 };
-    unsigned long long before_tick = 0;
+    int key; // key input buffer
+    int keyPressed = 0; // key pressed check
+    int secret[10] = { 0 }; // secret code buffer
+    unsigned long long before_tick = 0; // duplicate check
     while (1) { // runtime loop
+        if (exit_game == 1) break;
         now_ticks = GetTickCount64() - start_tick; // get now_ticks_from_time from start
 
         // check console size change
@@ -36,38 +57,54 @@ int main() {
             exit(0);
         }
 
+        // get key input
         if (_kbhit()) {
             key = _getch();
             if (key == 224) { // detect movement key
                 key = _getch();
                 secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
-                switch (key) {
-                    case KEY_LEFT:
-//                        printf("%d, 왼쪽으로 이동\n", key);
-                        break;
-                    case KEY_RIGHT:
-//                        printf("%d, 오른쪽으로 이동\n", key);
-                        break;
-                    case KEY_UP:
-//                        printf("%d, 위로 이동\n", key);
-                        break;
-                    case KEY_DOWN:
-//                        printf("%d, 아래로 이동\n", key);
-                        break;
-                    default:
-                        break;
-                }
+
+                keyData.key = key;
             }
             else { // detect other key
                 secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
-//                printf("%d, %c 입력\n", key, key);
+
+                keyData.key = key;
+            }
+        } else {
+        }
+
+        // check is not background
+        if (GetForegroundWindow() == hwnd) {
+            // check key pressed
+            int before = keyPressed;
+            for (key = 0; key < 256; key++) {
+                // ignore mouse buttons
+                if (key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON ||
+                    key == VK_XBUTTON1 || key == VK_XBUTTON2) {
+                    continue;
+                }
+
+                if (GetAsyncKeyState(key) & 0x8000) {
+                    keyPressed += 1;
+                    // prevent overflow
+                    keyPressed %= 2;
+                }
+            }
+
+            if (before != keyPressed) {
+                keyData.isPressed = 1;
+            } else {
+                keyData.isPressed = 0;
             }
         }
 
         // duplicate check
         if (now_ticks == before_tick) continue;
         // write after this line
-        intro();
+        if (intro__dead != 1) intro();
+        if (start_screen_button__dead != 1) start_screen_button();
+        if (story__dead != 1) story();
         before_tick = now_ticks;
     }
 }

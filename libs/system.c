@@ -23,8 +23,26 @@ struct Point getCursorPos() {
     return result;
 }
 
+void setCursorVisibility(int isVisible) {
+    CONSOLE_CURSOR_INFO cursorInfo;
+    cursorInfo.dwSize = 1;
+    cursorInfo.bVisible = isVisible;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+}
+
+/// @Deprecated : Use setColor(int backColor, int textColor) instead
 void setTextColor(int colorNum) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
+}
+
+/// @Warning : You must use resetColor() after using this function
+void setColor(int backColor, int textColor) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, (backColor << 4) | textColor);
+}
+
+void resetColor() {
+    setColor(BLACK, WHITE);
 }
 
 /* basic console functions */
@@ -32,6 +50,19 @@ void setTextColor(int colorNum) {
 int getUseableConsoleHeight() {
     struct Point size = getConsoleSize();
     return size.y - 3;
+}
+
+/// @Note : Point y is not used (it returns 0)
+struct Point getPrintCenter(char *str, ...) {
+    struct Point size = getConsoleSize();
+    va_list args;
+    va_start(args, str);
+
+    int len = vsnprintf(NULL, 0, str, args);
+    int x = (size.x - len) / 2;
+    struct Point result = { x, 0 };
+    va_end(args);
+    return result;
 }
 
 void printfCenter(int y, char* str, ...) {
