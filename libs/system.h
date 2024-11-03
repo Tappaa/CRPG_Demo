@@ -40,13 +40,16 @@ enum ColorType{
     WHITE		//15
 };
 
+/* basic console functions */
 void gotoXY(int x, int y);
 struct Point getConsoleSize();
 struct Point getCursorPos();
 void setCursorVisibility(int isVisible);
+unsigned long long utf8_strlen(const char* str);
 void setTextColor(int colorNum);
 void setColor(int backgroundColor, int textColor);
 void resetColor();
+/* basic console functions */
 
 int getUseableConsoleHeight();
 struct Point getPrintCenter(char *str, ...);
