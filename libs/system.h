@@ -40,6 +40,9 @@ enum ColorType{
     WHITE		//15
 };
 
+int isDisabledKeyInput();
+void setDisabledKeyInput(int isDisabled);
+
 /* basic console functions */
 void gotoXY(int x, int y);
 struct Point getConsoleSize();
@@ -49,6 +52,9 @@ unsigned long long utf8_strlen(const char* str);
 void setTextColor(int colorNum);
 void setColor(int backgroundColor, int textColor);
 void resetColor();
+int saveConsoleLayer(int layer);
+int printConsoleLayer(int layer);
+int resetConsoleLayer(int layer);
 /* basic console functions */
 
 int getUseableConsoleHeight();

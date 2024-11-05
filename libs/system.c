@@ -2,6 +2,16 @@
 #include <windows.h>
 #include <stdio.h>
 
+int isDisabledKeyInputL = 0;
+int isDisabledKeyInput() {
+    return isDisabledKeyInputL;
+}
+
+/// @Note : 0 : enable, 1 : disable
+void setDisabledKeyInput(int isDisabled) {
+    isDisabledKeyInputL = isDisabled;
+}
+
 /* basic console functions */
 
 void gotoXY(int x, int y) {
@@ -76,6 +86,51 @@ void setColor(int backColor, int textColor) {
 
 void resetColor() {
     setColor(BLACK, WHITE);
+}
+
+CHAR_INFO consoleLayerData[5][160 * 40] = { 0 }; // 160 columns, 40 rows
+/// @Warning : maximum 5 layers
+int saveConsoleLayer(int layer) {
+    struct Point screenSize = { getConsoleSize().x, getUseableConsoleHeight() };
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SMALL_RECT screen = { 0, 0, (short) screenSize.x, (short) screenSize.y };
+
+    CHAR_INFO *buffer = consoleLayerData[layer];
+    COORD bufferSize = { (short) (screenSize.x + 1), (short) (screenSize.y + 1) };
+    COORD bufferCoord = { 0, 0 };
+
+    // save console data
+    if (!ReadConsoleOutput(hConsole, buffer, bufferSize, bufferCoord, &screen)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+/// @Warning : maximum 5 layers
+int printConsoleLayer(int layer) {
+    struct Point screenSize = { getConsoleSize().x, getUseableConsoleHeight() };
+    CHAR_INFO *buffer = consoleLayerData[layer];
+
+    for (int y = 0; y <= screenSize.y; y++) {
+        gotoXY(0, y);
+        for (int x = 0; x <= screenSize.x; x++) {
+            CHAR_INFO *cell = &buffer[y * screenSize.x + x];
+            setColor((cell->Attributes >> 4) & 0xF, cell->Attributes & 0xF);
+            printfXY(x, y, "%c", cell->Char.AsciiChar);
+        }
+    }
+
+    return 0;
+}
+
+/// @Warning : maximum 5 layers
+int resetConsoleLayer(int layer) {
+    CHAR_INFO *buffer = consoleLayerData[layer];
+
+    *buffer = (CHAR_INFO) { 0 };
+    return 0;
 }
 
 /* basic console functions */

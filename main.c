@@ -57,45 +57,47 @@ int main() {
             exit(0);
         }
 
-        // get key input
-        if (_kbhit()) {
-            key = _getch();
-            if (key == 224) { // detect movement key
+        if (isDisabledKeyInput() == 0) {
+            // get key input
+            if (_kbhit()) {
                 key = _getch();
-                secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
+                if (key == 224) { // detect movement key
+                    key = _getch();
+                    secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
 
-                keyData.key = key;
-            }
-            else { // detect other key
-                secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
-
-                keyData.key = key;
-            }
-        } else {
-        }
-
-        // check is not background
-        if (GetForegroundWindow() == hwnd) {
-            // check key pressed
-            int before = keyPressed;
-            for (key = 0; key < 256; key++) {
-                // ignore mouse buttons
-                if (key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON ||
-                    key == VK_XBUTTON1 || key == VK_XBUTTON2) {
-                    continue;
+                    keyData.key = key;
                 }
+                else { // detect other key
+                    secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
 
-                if (GetAsyncKeyState(key) & 0x8000) {
-                    keyPressed += 1;
-                    // prevent overflow
-                    keyPressed %= 2;
+                    keyData.key = key;
                 }
-            }
-
-            if (before != keyPressed) {
-                keyData.isPressed = 1;
             } else {
-                keyData.isPressed = 0;
+            }
+
+            // check is not background
+            if (GetForegroundWindow() == hwnd) {
+                // check key pressed
+                int before = keyPressed;
+                for (key = 0; key < 256; key++) {
+                    // ignore mouse buttons
+                    if (key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON ||
+                        key == VK_XBUTTON1 || key == VK_XBUTTON2) {
+                        continue;
+                    }
+
+                    if (GetAsyncKeyState(key) & 0x8000) {
+                        keyPressed += 1;
+                        // prevent overflow
+                        keyPressed %= 2;
+                    }
+                }
+
+                if (before != keyPressed) {
+                    keyData.isPressed = 1;
+                } else {
+                    keyData.isPressed = 0;
+                }
             }
         }
 
