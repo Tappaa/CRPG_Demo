@@ -45,6 +45,7 @@ void intro() {
             printfCenter(getCurrentScreenBuffer(), 8, "C-RPG");
             printfCenter(getCurrentScreenBuffer(), 9, "2024.10.15");
             printfCenter(getCurrentScreenBuffer(), 10, "Made by. R,M,C");
+            printfCenter(getCurrentScreenBuffer(), 11, "Version. %s", game_version);
             copyScreenBuffer();
             break;
         case 5000:
