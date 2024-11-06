@@ -120,24 +120,16 @@ void printfInInformationBox(int level, char *str, ...) {
 
 // extra functions
 
-/// @Note : if index is -1, it will print on all screens
-void printInformationBoxLine(int index) {
+void printInformationBoxLine(HANDLE screen) {
     struct Point consoleSize = {
             .x = getConsoleSize().x,
             .y = getAvailableConsoleHeight()
     };
 
-    int size = index;
-    if (index < 0 || index >= getScreenBufferCount()) {
-        size = getScreenBufferCount();
-    }
-
-    for (int i = 0; i <= size; i++) {
-        resetColor(getScreenBuffer(i));
+        resetColor(screen);
         for (int x = 0; x < consoleSize.x; x++) {
-            gotoXY(getScreenBuffer(i), x, consoleSize.y + 1);
-            WriteFile(getScreenBuffer(i), "─", 3, NULL, NULL);
-        }
+            gotoXY(screen, x, consoleSize.y + 1);
+            WriteFile(screen, "─", 3, NULL, NULL);
     }
 
     refreshScreenBuffer();

@@ -124,10 +124,6 @@ void start_screen_button() {
         }
 
         // draw buttons
-        struct Point start = { 72, 30 };
-        struct Point end = { 85, 33 };
-        printEdgeLines(getNextScreenBuffer(), start, end);
-
         if (start_screen_button__selected == 0) {
             printfCenter(getCurrentScreenBuffer(), 32, "게임 종료");
             setColor(getCurrentScreenBuffer(), WHITE, BLACK);

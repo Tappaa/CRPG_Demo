@@ -41,7 +41,9 @@ int main() {
     start_tick = GetTickCount64();
 
     // draw information box line
-    printInformationBoxLine(-1);
+    for (int i = 0; i < getScreenBufferCount(); i++) {
+        printInformationBoxLine(getScreenBuffer(i));
+    }
 
     con_size = getConsoleSize();
 

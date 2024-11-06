@@ -104,7 +104,9 @@ void clearNextScreenBuffer() {
     FillConsoleOutputAttribute(screenBuffer[currentScreenBufferIndex], 0, (getConsoleSize().x + 1) *
                                                                           getAvailableConsoleHeight(), coord, &written);
 
-    printInformationBoxLine(!currentScreenBufferIndex);
+    for (int i = 0; i < getScreenBufferCount(); i++) {
+        printInformationBoxLine(getScreenBuffer(i));
+    }
 }
 
 void destroyScreenBuffer() {
