@@ -46,26 +46,26 @@ void intro() {
             printfCenter(getCurrentScreenBuffer(), 9, "2024.10.15");
             printfCenter(getCurrentScreenBuffer(), 10, "Made by. R,M,C");
             printfCenter(getCurrentScreenBuffer(), 11, "Version. %s", game_version);
-            copyScreenBuffer();
+            copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
             break;
         case 5000:
         case 8000:
             printfCenter(getNextScreenBuffer(), 30, "Loading.  ");
-            switchScreenBuffer();
+            switchNextScreenBuffer();
             break;
         case 6000:
         case 9000:
             printfCenter(getNextScreenBuffer(), 30, "Loading.. ");
-            switchScreenBuffer();
+            switchNextScreenBuffer();
             break;
         case 7000:
         case 10000:
             printfCenter(getNextScreenBuffer(), 30, "Loading...");
-            switchScreenBuffer();
+            switchNextScreenBuffer();
             break;
         case 11000:
             printfCenter(getNextScreenBuffer(), 30, "Loading complete.");
-            switchScreenBuffer();
+            switchNextScreenBuffer();
             break;
         case 13000:
             printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
@@ -95,8 +95,8 @@ void intro() {
                     printfCenter(getNextScreenBuffer(), 31, "게임 시작");
                     setColor(getNextScreenBuffer(), BLACK, WHITE);
                     printfCenter(getNextScreenBuffer(), 32, "게임 종료");
-                    copyScreenBuffer();
-                    switchScreenBuffer();
+                    copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
+                    switchNextScreenBuffer();
                 }
             }
             break;
@@ -142,8 +142,8 @@ void start_screen_button() {
                 printfInInformationBox(1, "게임을 시작합니다.");
 
                 start_screen_button__dead = 1;
-                clearNextScreenBuffer();
-                switchScreenBuffer();
+                clearScreenBuffer(getNextScreenBufferIndex());
+                switchNextScreenBuffer();
             } else if (start_screen_button__selected == 1) {
                 printfInInformationBox(1, "게임을 종료합니다.");
                 ExitGame();
@@ -163,7 +163,7 @@ void story() {
         switch (story__page) {
             case 0:
                 if (story__local_ticks == 64) {
-                    clearNextScreenBuffer();
+                    clearScreenBuffer(getNextScreenBufferIndex());
                     printfCenter(getNextScreenBuffer(), 13, "옛날 옛적, 한 작은 마을에 \"슬라임 퇴치 전문가\"라는 직업을 가진 평범한 청년, 렌이 살고 있었다.");
                     printfCenter(getNextScreenBuffer(), 14, "렌은 보통 마을 주변을 돌아다니며 물컹물컹한 슬라임들을 잡는 일을 했다.");
                     printfCenter(getNextScreenBuffer(), 15, "누구에게나 무난히 깔끔하게 치우는 슬라임 청소부 역할이었지만, 늘 뭔가 더 큰 일을 해보고 싶다는 마음이 있었다.");
@@ -171,7 +171,7 @@ void story() {
                     printfCenter(getNextScreenBuffer(), 17, "어느 날, 마을에 소문이 돌았다.");
                     printfCenter(getNextScreenBuffer(), 18, "\"마왕이 되살아나 세상을 어둠에 물들이려 한다!\" 마왕이 있는 곳은 험준한 산의 정상, 고대의 성채라 했다.");
                     printfCenter(getNextScreenBuffer(), 19, "렌은 용기를 내어, 단단히 준비한 자신의 무기와 함께 길을 나섰다.");
-                    switchScreenBuffer();
+                    switchNextScreenBuffer();
                 } else if (story__local_ticks > 64) {
                     if (story__animation == 0 && story__local_ticks == 96) {
                         clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
@@ -185,20 +185,20 @@ void story() {
                     if (keyData.isPressed == 1) {
                         story__page++;
                         story__local_ticks = 0;
-                        clearNextScreenBuffer();
-                        switchScreenBuffer();
+                        clearScreenBuffer(getNextScreenBufferIndex());
+                        switchNextScreenBuffer();
                     }
                 }
                 break;
             case 1:
                 if (story__local_ticks == 64) {
-                    clearNextScreenBuffer();
+                    clearScreenBuffer(getNextScreenBufferIndex());
                     printfCenter(getNextScreenBuffer(), 13, "조작키");
                     printfCenter(getNextScreenBuffer(), 14, "↑, ↓, ←, → : 이동");
                     printfCenter(getNextScreenBuffer(), 15, "Enter : 확인");
                     printfCenter(getNextScreenBuffer(), 16, "ESC : 뒤로가기, 메뉴");
                     printfCenter(getNextScreenBuffer(), 17, "\\ : ????");
-                    switchScreenBuffer();
+                    switchNextScreenBuffer();
                 } else if (story__local_ticks > 64) {
                     if (story__animation == 0 && story__local_ticks == 96) {
                         clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
@@ -212,12 +212,12 @@ void story() {
                     if (keyData.isPressed == 1) {
                         story__page++;
                         story__local_ticks = 0;
-                        clearNextScreenBuffer();
+                        clearScreenBuffer(getNextScreenBufferIndex());
 
                         struct Point rb = { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 };
                         printEdgeLines(getNextScreenBuffer(), zz, rb);
 
-                        switchScreenBuffer();
+                        switchNextScreenBuffer();
                     }
                 }
                 break;

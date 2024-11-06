@@ -115,6 +115,11 @@ int main() {
         if (story__dead != 1) story();
         before_tick = now_ticks;
     }
-    destroyScreenBuffer();
+
+    for (int i = 0; i < getScreenBufferCount(); i++) {
+        destroyScreenBuffer(&getAllScreens()[i]);
+    }
+
+    return 0;
 }
 

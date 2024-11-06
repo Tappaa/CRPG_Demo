@@ -3,4 +3,4 @@
 #include "headers/print.h"
 #include "headers/player.h"
 
-#define game_version "0.0.9"
+#define game_version "0.0.10"

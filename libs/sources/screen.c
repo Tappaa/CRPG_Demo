@@ -48,36 +48,51 @@ int getAvailableConsoleHeight() {
     return size.y - 3;
 }
 
+#define screenBufferCount 2
 int currentScreenBufferIndex = 0;
-HANDLE screenBuffer[2] = { 0 };
+HANDLE screenBuffer[screenBufferCount] = { 0 };
 void initScreenBuffer(int cursorVisibility) {
-    screenBuffer[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-    screenBuffer[1] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-
     CONSOLE_CURSOR_INFO cursorInfo;
     cursorInfo.dwSize = 1;
     cursorInfo.bVisible = cursorVisibility;
-    SetConsoleCursorInfo(screenBuffer[0], &cursorInfo);
-    SetConsoleCursorInfo(screenBuffer[1], &cursorInfo);
+
+    for (int i = 0; i < screenBufferCount; i++) {
+        screenBuffer[i] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER,
+                                                    NULL);
+        SetConsoleCursorInfo(screenBuffer[i], &cursorInfo);
+    }
 
     SetConsoleActiveScreenBuffer(screenBuffer[0]);
+}
+
+int getCurrentScreenBufferIndex() {
+    return currentScreenBufferIndex;
+}
+
+int getNextScreenBufferIndex() {
+    return (getCurrentScreenBufferIndex() + 1) % screenBufferCount;
 }
 
 int getScreenBufferCount() {
     return sizeof(screenBuffer) / sizeof(HANDLE);
 }
 
-void switchScreenBuffer() {
-    currentScreenBufferIndex = !currentScreenBufferIndex;
-    SetConsoleActiveScreenBuffer(screenBuffer[currentScreenBufferIndex]);
+void switchNextScreenBuffer() {
+    currentScreenBufferIndex = getNextScreenBufferIndex();
+    SetConsoleActiveScreenBuffer(screenBuffer[getNextScreenBufferIndex()]);
+}
+
+void switchScreenBuffer(int index) {
+    currentScreenBufferIndex = index;
+    SetConsoleActiveScreenBuffer(screenBuffer[index]);
 }
 
 HANDLE getCurrentScreenBuffer() {
-    return screenBuffer[currentScreenBufferIndex];
+    return screenBuffer[getCurrentScreenBufferIndex()];
 }
 
 HANDLE getNextScreenBuffer() {
-    return screenBuffer[!currentScreenBufferIndex];
+    return screenBuffer[getNextScreenBufferIndex()];
 }
 
 HANDLE getScreenBuffer(int index) {
@@ -92,24 +107,22 @@ void refreshScreenBuffer() {
     SetConsoleActiveScreenBuffer(getCurrentScreenBuffer());
 }
 
-void copyScreenBuffer() {
-    screenBuffer[!currentScreenBufferIndex] = screenBuffer[currentScreenBufferIndex];
+void copyScreenBuffer(int sourceIndex, int destIndex) {
+    screenBuffer[destIndex] = screenBuffer[sourceIndex];
 }
 
-void clearNextScreenBuffer() {
-    COORD coord = { 0, 0 };
+/// @Note : if you want to clear current screen buffer, after use this function, you must use refreshScreenBuffer()
+void clearScreenBuffer(int index) {
+    COORD coord = {0, 0};
     DWORD written;
-    FillConsoleOutputCharacter(screenBuffer[currentScreenBufferIndex], ' ', (getConsoleSize().x + 1) *
-                                                                            getAvailableConsoleHeight(), coord, &written);
-    FillConsoleOutputAttribute(screenBuffer[currentScreenBufferIndex], 0, (getConsoleSize().x + 1) *
-                                                                          getAvailableConsoleHeight(), coord, &written);
+    FillConsoleOutputCharacter(screenBuffer[index], ' ', (getConsoleSize().x + 1) *
+                                            getAvailableConsoleHeight(), coord, &written);
+    FillConsoleOutputAttribute(screenBuffer[index], 0, (getConsoleSize().x + 1) *
+                                          getAvailableConsoleHeight(), coord, &written);
 
-    for (int i = 0; i < getScreenBufferCount(); i++) {
-        printInformationBoxLine(getScreenBuffer(i));
-    }
+    printInformationBoxLine(screenBuffer[index]);
 }
 
-void destroyScreenBuffer() {
-    CloseHandle(screenBuffer[0]);
-    CloseHandle(screenBuffer[1]);
+void destroyScreenBuffer(HANDLE* screen) {
+    CloseHandle(*screen);
 }
