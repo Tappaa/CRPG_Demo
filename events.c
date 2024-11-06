@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "libs/system.h"
+#include "libs/allinone.h"
 
 extern unsigned long long start_tick;
 extern unsigned long long now_ticks;
@@ -21,9 +20,9 @@ void secret_code_runner(int* pass, int enter, int size) {
         temp2 = pass[i];
         pass[i] = temp;
         temp = temp2;
-//        printf("%d\t", pass[i]);
+//        printf_Buffer(getCurrentScreenBuffer(), "%d\t", pass[i]);
     }
-    //printf("\n");
+    //printf_Buffer(getCurrentScreenBuffer(), "\n");
     // U D U D L R L R B A
     // A B R L R L D U D U
     if (pass[0] == KEY_A && pass[1] == KEY_B && pass[2] == KEY_RIGHT && pass[3] == KEY_LEFT && pass[4] == KEY_RIGHT && pass[5] == KEY_LEFT && pass[6] == KEY_DOWN && pass[7] == KEY_UP && pass[8] == KEY_DOWN && pass[9] == KEY_UP) {
@@ -38,59 +37,66 @@ int intro__dead = 0;
 void intro() {
     switch (now_ticks) {
         case 1000:
-            printfXY(0, 0, "Welcome to C-RPG");
-            printfXY(0, 1, "This is a simple RPG game made with C language.");
+            printfXY(getCurrentScreenBuffer(), 0, 0, "Welcome to C-RPG");
+            printfXY(getCurrentScreenBuffer(), 0, 1, "This is a simple RPG game made with C language.");
             break;
         case 4000:
-            clearConsoleLines(0, getUseableConsoleHeight());
-            printfCenter(8, "C-RPG");
-            printfCenter(9, "2024.10.15");
-            printfCenter(10, "Made by. R,M,C");
+            clearConsoleLines(getCurrentScreenBuffer(), 0, getAvailableConsoleHeight());
+            printfCenter(getCurrentScreenBuffer(), 8, "C-RPG");
+            printfCenter(getCurrentScreenBuffer(), 9, "2024.10.15");
+            printfCenter(getCurrentScreenBuffer(), 10, "Made by. R,M,C");
+            copyScreenBuffer();
             break;
         case 5000:
         case 8000:
-            printfCenter(30, "Loading.  ");
+            printfCenter(getNextScreenBuffer(), 30, "Loading.  ");
+            switchScreenBuffer();
             break;
         case 6000:
         case 9000:
-            printfCenter(30, "Loading.. ");
+            printfCenter(getNextScreenBuffer(), 30, "Loading.. ");
+            switchScreenBuffer();
             break;
         case 7000:
         case 10000:
-            printfCenter(30, "Loading...");
+            printfCenter(getNextScreenBuffer(), 30, "Loading...");
+            switchScreenBuffer();
             break;
         case 11000:
-            printfCenter(30, "Loading complete.");
+            printfCenter(getNextScreenBuffer(), 30, "Loading complete.");
+            switchScreenBuffer();
             break;
         case 13000:
-            printfCenter(31, "Press any key to start.");
+            printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
             printfInInformationBox(1, "게임을 시작할 준비가 되었습니다.");
             break;
         default:
             if (now_ticks > 13000) {
                 intro__local_ticks++;
                 if (intro__animation == 0 && intro__local_ticks == 32) {
-                    clearConsoleLines(31, 31);
+                    clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
                     intro__animation = 1;
                 } else if (intro__animation == 1 && intro__local_ticks == 64) {
-                    printfCenter(31, "Press any key to start.");
+                    printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
                     intro__animation = 0;
                     intro__local_ticks = 0;
                 }
 
                 if (keyData.isPressed == 1) {
                     intro__dead = 1;
-                    clearConsoleLines(20, getUseableConsoleHeight());
+                    clearConsoleLines(getNextScreenBuffer(), 20, getAvailableConsoleHeight());
 
                     // draw buttons
-                    printfCenter(30, "---------------");
-                    printfXY(getPrintCenter("|  게임 시작  |").x, 31, "|  ");
-                    setColor(WHITE, BLACK);
-                    printf("게임 시작");
-                    setColor(BLACK, WHITE);
-                    printf("  |");
-                    printfCenter(32, "|  게임 종료  |");
-                    printfCenter(33, "---------------");
+                    printfCenter(getNextScreenBuffer(), 30, "---------------");
+                    printfXY(getNextScreenBuffer(), getPrintCenter("|  게임 시작  |").x, 31, "|  ");
+                    setColor(getNextScreenBuffer(), WHITE, BLACK);
+                    printf_Buffer(getNextScreenBuffer(), "게임 시작");
+                    setColor(getNextScreenBuffer(), BLACK, WHITE);
+                    printf_Buffer(getNextScreenBuffer(), "  |");
+                    printfCenter(getNextScreenBuffer(), 32, "|  게임 종료  |");
+                    printfCenter(getNextScreenBuffer(), 33, "---------------");
+                    copyScreenBuffer();
+                    switchScreenBuffer();
                 }
             }
             break;
@@ -119,19 +125,19 @@ void start_screen_button() {
 
         // draw buttons
         if (start_screen_button__selected == 0) {
-            printfXY(getPrintCenter("|  게임 시작  |").x, 31, "|  ");
-            setColor(WHITE, BLACK);
-            printf("게임 시작");
-            resetColor();
-            printf("  |");
-            printfCenter(32, "|  게임 종료  |");
+            printfXY(getCurrentScreenBuffer(), getPrintCenter("|  게임 시작  |").x, 31, "|  ");
+            setColor(getCurrentScreenBuffer(), WHITE, BLACK);
+            printf_Buffer(getCurrentScreenBuffer(), "게임 시작");
+            resetColor(getCurrentScreenBuffer());
+            printf_Buffer(getCurrentScreenBuffer(), "  |");
+            printfCenter(getCurrentScreenBuffer(), 32, "|  게임 종료  |");
         } else if (start_screen_button__selected == 1) {
-            printfCenter(31, "|  게임 시작  |");
-            printfXY(getPrintCenter("|  게임 종료  |").x, 32, "|  ");
-            setColor(WHITE, BLACK);
-            printf("게임 종료");
-            resetColor();
-            printf("  |");
+            printfCenter(getCurrentScreenBuffer(), 31, "|  게임 시작  |");
+            printfXY(getCurrentScreenBuffer(), getPrintCenter("|  게임 종료  |").x, 32, "|  ");
+            setColor(getCurrentScreenBuffer(), WHITE, BLACK);
+            printf_Buffer(getCurrentScreenBuffer(), "게임 종료");
+            resetColor(getCurrentScreenBuffer());
+            printf_Buffer(getCurrentScreenBuffer(), "  |");
         }
 
         // button click
@@ -140,7 +146,8 @@ void start_screen_button() {
                 printfInInformationBox(1, "게임을 시작합니다.");
 
                 start_screen_button__dead = 1;
-                clearConsoleLines(0, getUseableConsoleHeight());
+                clearNextScreenBuffer();
+                switchScreenBuffer();
             } else if (start_screen_button__selected == 1) {
                 printfInInformationBox(1, "게임을 종료합니다.");
                 ExitGame();
@@ -160,19 +167,21 @@ void story() {
         switch (story__page) {
             case 0:
                 if (story__local_ticks == 64) {
-                    printfCenter(13, "옛날 옛적, 한 작은 마을에 \"슬라임 퇴치 전문가\"라는 직업을 가진 평범한 청년, 렌이 살고 있었다.");
-                    printfCenter(14, "렌은 보통 마을 주변을 돌아다니며 물컹물컹한 슬라임들을 잡는 일을 했다.");
-                    printfCenter(15, "누구에게나 무난히 깔끔하게 치우는 슬라임 청소부 역할이었지만, 늘 뭔가 더 큰 일을 해보고 싶다는 마음이 있었다.");
+                    clearNextScreenBuffer();
+                    printfCenter(getNextScreenBuffer(), 13, "옛날 옛적, 한 작은 마을에 \"슬라임 퇴치 전문가\"라는 직업을 가진 평범한 청년, 렌이 살고 있었다.");
+                    printfCenter(getNextScreenBuffer(), 14, "렌은 보통 마을 주변을 돌아다니며 물컹물컹한 슬라임들을 잡는 일을 했다.");
+                    printfCenter(getNextScreenBuffer(), 15, "누구에게나 무난히 깔끔하게 치우는 슬라임 청소부 역할이었지만, 늘 뭔가 더 큰 일을 해보고 싶다는 마음이 있었다.");
 
-                    printfCenter(17, "어느 날, 마을에 소문이 돌았다.");
-                    printfCenter(18, "\"마왕이 되살아나 세상을 어둠에 물들이려 한다!\" 마왕이 있는 곳은 험준한 산의 정상, 고대의 성채라 했다.");
-                    printfCenter(19, "렌은 용기를 내어, 단단히 준비한 자신의 무기와 함께 길을 나섰다.");
+                    printfCenter(getNextScreenBuffer(), 17, "어느 날, 마을에 소문이 돌았다.");
+                    printfCenter(getNextScreenBuffer(), 18, "\"마왕이 되살아나 세상을 어둠에 물들이려 한다!\" 마왕이 있는 곳은 험준한 산의 정상, 고대의 성채라 했다.");
+                    printfCenter(getNextScreenBuffer(), 19, "렌은 용기를 내어, 단단히 준비한 자신의 무기와 함께 길을 나섰다.");
+                    switchScreenBuffer();
                 } else if (story__local_ticks > 64) {
                     if (story__animation == 0 && story__local_ticks == 96) {
-                        clearConsoleLines(31, 31);
+                        clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
                         story__animation = 1;
                     } else if (story__animation == 1 && story__local_ticks == 128) {
-                        printfCenter(31, "Press any key to continue.");
+                        printfCenter(getCurrentScreenBuffer(), 31, "Press any key to continue.");
                         story__animation = 0;
                         story__local_ticks = 64;
                     }
@@ -180,24 +189,26 @@ void story() {
                     if (keyData.isPressed == 1) {
                         story__page++;
                         story__local_ticks = 0;
-                        clearConsoleLines(13, 31);
-
+                        clearNextScreenBuffer();
+                        switchScreenBuffer();
                     }
                 }
                 break;
             case 1:
                 if (story__local_ticks == 64) {
-                    printfCenter(13, "조작키");
-                    printfCenter(14, "↑, ↓, ←, → : 이동");
-                    printfCenter(15, "Enter : 확인");
-                    printfCenter(16, "ESC : 뒤로가기, 메뉴");
-                    printfCenter(17, "\\ : ????");
+                    clearNextScreenBuffer();
+                    printfCenter(getNextScreenBuffer(), 13, "조작키");
+                    printfCenter(getNextScreenBuffer(), 14, "↑, ↓, ←, → : 이동");
+                    printfCenter(getNextScreenBuffer(), 15, "Enter : 확인");
+                    printfCenter(getNextScreenBuffer(), 16, "ESC : 뒤로가기, 메뉴");
+                    printfCenter(getNextScreenBuffer(), 17, "\\ : ????");
+                    switchScreenBuffer();
                 } else if (story__local_ticks > 64) {
                     if (story__animation == 0 && story__local_ticks == 96) {
-                        clearConsoleLines(31, 31);
+                        clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
                         story__animation = 1;
                     } else if (story__animation == 1 && story__local_ticks == 128) {
-                        printfCenter(31, "Press any key to start.");
+                        printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
                         story__animation = 0;
                         story__local_ticks = 64;
                     }
@@ -205,7 +216,8 @@ void story() {
                     if (keyData.isPressed == 1) {
                         story__page++;
                         story__local_ticks = 0;
-                        clearConsoleLines(13, 31);
+                        clearNextScreenBuffer();
+                        switchScreenBuffer();
                     }
                 }
                 break;

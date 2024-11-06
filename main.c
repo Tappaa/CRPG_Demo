@@ -1,14 +1,20 @@
-#include <stdio.h>
 #include <conio.h>
-#include <Windows.h>
-#include "libs/system.h"
+#include "libs/allinone.h"
 
 struct Point con_size;
 
+// extern
 extern int cheat_mode;
 extern int intro__dead;
 extern int start_screen_button__dead;
 extern int story__dead;
+
+extern void secret_code_runner(int* pass, int enter, int size);
+extern void intro();
+extern void start_screen_button();
+extern void story();
+// extern
+
 unsigned long long start_tick;
 unsigned long long now_ticks;
 
@@ -20,25 +26,25 @@ void ExitGame() {
     exit_game = 1;
 }
 
-extern void secret_code_runner(int* pass, int enter, int size);
-extern void intro();
-extern void start_screen_button();
-extern void story();
 int main() {
     // get console window handle
     HWND hwnd = GetConsoleWindow();
 
-    // hide cursor
-    setCursorVisibility(0);
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+    system("mode con cols=160 lines=43 | title \"C-RPG | Alpha Test\"");
+
+    // init screen buffer
+    initScreenBuffer(0);
 
     // get now time with milliseconds
     start_tick = GetTickCount64();
-    system("chcp 65001");
-    system("mode con cols=160 lines=43 | title \"C-RPG | Alpha Test\"");
-    for (int i = 0; i <= getConsoleSize().x; i++) {
-        gotoXY(i, getUseableConsoleHeight() + 1);
-        printf("-");
+    for (int i = 0; i < getScreenBufferCount(); i++) {
+        for (int j = 0; j <= getConsoleSize().x; j++) {
+            printfXY(getScreenBuffer(i), j, getAvailableConsoleHeight() + 1, "-");
+        }
     }
+
     con_size = getConsoleSize();
 
     // do not change console size
@@ -109,5 +115,6 @@ int main() {
         if (story__dead != 1) story();
         before_tick = now_ticks;
     }
+    destroyScreenBuffer();
 }
 
