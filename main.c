@@ -39,11 +39,9 @@ int main() {
 
     // get now time with milliseconds
     start_tick = GetTickCount64();
-    for (int i = 0; i < getScreenBufferCount(); i++) {
-        for (int j = 0; j <= getConsoleSize().x; j++) {
-            printfXY(getScreenBuffer(i), j, getAvailableConsoleHeight() + 1, "-");
-        }
-    }
+
+    // draw information box line
+    printInformationBoxLine(-1);
 
     con_size = getConsoleSize();
 

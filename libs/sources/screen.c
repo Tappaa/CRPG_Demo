@@ -1,5 +1,7 @@
 #include "../allinone.h"
 
+struct Point zz = {0, 0 };
+
 int isDisabledKeyInputL = 0;
 int isDisabledKeyInput() {
     return isDisabledKeyInputL;
@@ -36,6 +38,7 @@ void setColor(HANDLE screen, int backColor, int textColor) {
     SetConsoleTextAttribute(screen, (backColor << 4) | textColor);
 }
 
+/// @Note : Background - Black, Text - White
 void resetColor(HANDLE screen) {
     setColor(screen, BLACK, WHITE);
 }
@@ -45,7 +48,7 @@ int getAvailableConsoleHeight() {
     return size.y - 3;
 }
 
-int screenBufferIndex = 0;
+int currentScreenBufferIndex = 0;
 HANDLE screenBuffer[2] = { 0 };
 void initScreenBuffer(int cursorVisibility) {
     screenBuffer[0] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
@@ -65,16 +68,16 @@ int getScreenBufferCount() {
 }
 
 void switchScreenBuffer() {
-    screenBufferIndex = !screenBufferIndex;
-    SetConsoleActiveScreenBuffer(screenBuffer[screenBufferIndex]);
+    currentScreenBufferIndex = !currentScreenBufferIndex;
+    SetConsoleActiveScreenBuffer(screenBuffer[currentScreenBufferIndex]);
 }
 
 HANDLE getCurrentScreenBuffer() {
-    return screenBuffer[screenBufferIndex];
+    return screenBuffer[currentScreenBufferIndex];
 }
 
 HANDLE getNextScreenBuffer() {
-    return screenBuffer[!screenBufferIndex];
+    return screenBuffer[!currentScreenBufferIndex];
 }
 
 HANDLE getScreenBuffer(int index) {
@@ -90,16 +93,18 @@ void refreshScreenBuffer() {
 }
 
 void copyScreenBuffer() {
-    screenBuffer[!screenBufferIndex] = screenBuffer[screenBufferIndex];
+    screenBuffer[!currentScreenBufferIndex] = screenBuffer[currentScreenBufferIndex];
 }
 
 void clearNextScreenBuffer() {
     COORD coord = { 0, 0 };
     DWORD written;
-    FillConsoleOutputCharacter(screenBuffer[screenBufferIndex], ' ', (getConsoleSize().x + 1) *
-            getAvailableConsoleHeight(), coord, &written);
-    FillConsoleOutputAttribute(screenBuffer[screenBufferIndex], 0, (getConsoleSize().x + 1) *
-            getAvailableConsoleHeight(), coord, &written);
+    FillConsoleOutputCharacter(screenBuffer[currentScreenBufferIndex], ' ', (getConsoleSize().x + 1) *
+                                                                            getAvailableConsoleHeight(), coord, &written);
+    FillConsoleOutputAttribute(screenBuffer[currentScreenBufferIndex], 0, (getConsoleSize().x + 1) *
+                                                                          getAvailableConsoleHeight(), coord, &written);
+
+    printInformationBoxLine(!currentScreenBufferIndex);
 }
 
 void destroyScreenBuffer() {

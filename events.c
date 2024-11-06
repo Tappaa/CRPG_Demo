@@ -88,14 +88,13 @@ void intro() {
                     clearConsoleLines(getNextScreenBuffer(), 20, getAvailableConsoleHeight());
 
                     // draw buttons
-                    printfCenter(getNextScreenBuffer(), 30, "---------------");
-                    printfXY(getNextScreenBuffer(), getPrintCenter("|  게임 시작  |").x, 31, "|  ");
+                    struct Point start = { 72, 30 };
+                    struct Point end = { 85, 33 };
+                    printEdgeLines(getNextScreenBuffer(), start, end);
                     setColor(getNextScreenBuffer(), WHITE, BLACK);
-                    printf_Buffer(getNextScreenBuffer(), "게임 시작");
+                    printfCenter(getNextScreenBuffer(), 31, "게임 시작");
                     setColor(getNextScreenBuffer(), BLACK, WHITE);
-                    printf_Buffer(getNextScreenBuffer(), "  |");
-                    printfCenter(getNextScreenBuffer(), 32, "|  게임 종료  |");
-                    printfCenter(getNextScreenBuffer(), 33, "---------------");
+                    printfCenter(getNextScreenBuffer(), 32, "게임 종료");
                     copyScreenBuffer();
                     switchScreenBuffer();
                 }
@@ -125,20 +124,20 @@ void start_screen_button() {
         }
 
         // draw buttons
+        struct Point start = { 72, 30 };
+        struct Point end = { 85, 33 };
+        printEdgeLines(getNextScreenBuffer(), start, end);
+
         if (start_screen_button__selected == 0) {
-            printfXY(getCurrentScreenBuffer(), getPrintCenter("|  게임 시작  |").x, 31, "|  ");
+            printfCenter(getCurrentScreenBuffer(), 32, "게임 종료");
             setColor(getCurrentScreenBuffer(), WHITE, BLACK);
-            printf_Buffer(getCurrentScreenBuffer(), "게임 시작");
+            printfCenter(getCurrentScreenBuffer(), 31, "게임 시작");
             resetColor(getCurrentScreenBuffer());
-            printf_Buffer(getCurrentScreenBuffer(), "  |");
-            printfCenter(getCurrentScreenBuffer(), 32, "|  게임 종료  |");
         } else if (start_screen_button__selected == 1) {
-            printfCenter(getCurrentScreenBuffer(), 31, "|  게임 시작  |");
-            printfXY(getCurrentScreenBuffer(), getPrintCenter("|  게임 종료  |").x, 32, "|  ");
+            printfCenter(getCurrentScreenBuffer(), 31, "게임 시작");
             setColor(getCurrentScreenBuffer(), WHITE, BLACK);
-            printf_Buffer(getCurrentScreenBuffer(), "게임 종료");
+            printfCenter(getCurrentScreenBuffer(), 32, "게임 종료");
             resetColor(getCurrentScreenBuffer());
-            printf_Buffer(getCurrentScreenBuffer(), "  |");
         }
 
         // button click
@@ -218,6 +217,10 @@ void story() {
                         story__page++;
                         story__local_ticks = 0;
                         clearNextScreenBuffer();
+
+                        struct Point rb = { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 };
+                        printEdgeLines(getNextScreenBuffer(), zz, rb);
+
                         switchScreenBuffer();
                     }
                 }

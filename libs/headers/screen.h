@@ -24,6 +24,8 @@ enum ColorType{
     WHITE		//15
 };
 
+extern struct Point zz;
+
 int isDisabledKeyInput();
 void setDisabledKeyInput(int isDisabled);
 

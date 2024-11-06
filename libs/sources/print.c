@@ -117,3 +117,63 @@ void printfInInformationBox(int level, char *str, ...) {
     strcpy(past_str, buffer);
     refreshScreenBuffer();
 }
+
+// extra functions
+
+/// @Note : if index is -1, it will print on all screens
+void printInformationBoxLine(int index) {
+    struct Point consoleSize = {
+            .x = getConsoleSize().x,
+            .y = getAvailableConsoleHeight()
+    };
+
+    int size = index;
+    if (index < 0 || index >= getScreenBufferCount()) {
+        size = getScreenBufferCount();
+    }
+
+    for (int i = 0; i <= size; i++) {
+        resetColor(getScreenBuffer(i));
+        for (int x = 0; x < consoleSize.x; x++) {
+            gotoXY(getScreenBuffer(i), x, consoleSize.y + 1);
+            WriteFile(getScreenBuffer(i), "─", 3, NULL, NULL);
+        }
+    }
+
+    refreshScreenBuffer();
+}
+
+void printEdgeLines(HANDLE screen, struct Point pos1, struct Point pos2) {
+    struct Point length = {
+            .x = pos2.x - pos1.x,
+            .y = pos2.y - pos1.y
+    };
+
+    resetColor(screen);
+    // top and bottom edge lines
+    for (int x = 0; x < length.x; x++) {
+        gotoXY(screen, pos1.x + x, pos1.y + 0);
+        WriteFile(screen, "─", 3, NULL, NULL);
+        gotoXY(screen, pos1.x + x, pos1.y + length.y);
+        WriteFile(screen, "─", 3, NULL, NULL);
+    }
+    // left and right edge lines
+    for (int y = 0; y <= length.y; y++) {
+        gotoXY(screen, pos1.x, pos1.y + y);
+        WriteFile(screen, "│", 3, NULL, NULL);
+        gotoXY(screen, pos1.x + length.x, pos1.y + y);
+        WriteFile(screen, "│", 3, NULL, NULL);
+    }
+
+    // corners
+    gotoXY(screen, pos1.x + 0, pos1.y + 0);
+    WriteFile(screen, "┌", 3, NULL, NULL);
+    gotoXY(screen, pos1.x + length.x, pos1.y + 0);
+    WriteFile(screen, "┐", 3, NULL, NULL);
+    gotoXY(screen, pos1.x + 0, pos1.y + length.y);
+    WriteFile(screen, "└", 3, NULL, NULL);
+    gotoXY(screen, pos1.x + length.x, pos1.y + length.y);
+    WriteFile(screen, "┘", 3, NULL, NULL);
+
+    refreshScreenBuffer();
+}
