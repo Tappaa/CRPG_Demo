@@ -1,4 +1,4 @@
-#include "../allinone.h"
+#include "../manager.h"
 
 /// @Note : Point y is not used (it returns 0)
 struct Point getPrintCenter(char *str, ...) {
@@ -47,4 +47,8 @@ unsigned __int64 utf8_strlen(const char* str) {
     }
 
     return length;
+}
+
+void setRandomSeed(unsigned int seed) {
+    srand(seed);
 }

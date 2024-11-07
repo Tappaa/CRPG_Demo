@@ -1,8 +1,7 @@
-#include "libs/allinone.h"
+#include "libs/manager.h"
 
 extern unsigned long long start_tick;
 extern unsigned long long now_ticks;
-extern struct Key keyData;
 
 extern void ExitGame();
 // extern
@@ -31,8 +30,6 @@ void secret_code_runner(int* pass, int enter, int size) {
     }
 }
 
-int intro__animation = 0;
-int intro__local_ticks = 0; // 64tick = 1sec
 int intro__dead = 0;
 void intro() {
     switch (now_ticks) {
@@ -68,36 +65,26 @@ void intro() {
             switchNextScreenBuffer();
             break;
         case 13000:
-            printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
+            printfCenter(getCurrentScreenBuffer(), 31, "Press any key to continue.");
             printfInInformationBox(1, "게임을 시작할 준비가 되었습니다.");
             break;
         default:
             if (now_ticks > 13000) {
-                intro__local_ticks++;
-                if (intro__animation == 0 && intro__local_ticks == 32) {
-                    clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
-                    intro__animation = 1;
-                } else if (intro__animation == 1 && intro__local_ticks == 64) {
-                    printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
-                    intro__animation = 0;
-                    intro__local_ticks = 0;
-                }
+                printContinueAction(31);
 
-                if (keyData.isPressed == 1) {
-                    intro__dead = 1;
-                    clearConsoleLines(getNextScreenBuffer(), 20, getAvailableConsoleHeight());
+                intro__dead = 1;
+                clearConsoleLines(getNextScreenBuffer(), 20, getAvailableConsoleHeight());
 
-                    // draw buttons
-                    struct Point start = { 72, 30 };
-                    struct Point end = { 85, 33 };
-                    printEdgeLines(getNextScreenBuffer(), start, end);
-                    setColor(getNextScreenBuffer(), WHITE, BLACK);
-                    printfCenter(getNextScreenBuffer(), 31, "게임 시작");
-                    setColor(getNextScreenBuffer(), BLACK, WHITE);
-                    printfCenter(getNextScreenBuffer(), 32, "게임 종료");
-                    copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
-                    switchNextScreenBuffer();
-                }
+                // draw buttons
+                struct Point start = { 72, 30 };
+                struct Point end = { 85, 33 };
+                printEdgeLines(getNextScreenBuffer(), start, end);
+                setColor(getNextScreenBuffer(), WHITE, BLACK);
+                printfCenter(getNextScreenBuffer(), 31, "게임 시작");
+                setColor(getNextScreenBuffer(), BLACK, WHITE);
+                printfCenter(getNextScreenBuffer(), 32, "게임 종료");
+                copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
+                switchNextScreenBuffer();
             }
             break;
     }
@@ -152,7 +139,6 @@ void start_screen_button() {
     }
 }
 
-int story__animation = 0;
 int story__local_ticks = 0;
 int story__page = 0;
 int story__dead = 0;
@@ -173,21 +159,12 @@ void story() {
                     printfCenter(getNextScreenBuffer(), 19, "렌은 용기를 내어, 단단히 준비한 자신의 무기와 함께 길을 나섰다.");
                     switchNextScreenBuffer();
                 } else if (story__local_ticks > 64) {
-                    if (story__animation == 0 && story__local_ticks == 96) {
-                        clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
-                        story__animation = 1;
-                    } else if (story__animation == 1 && story__local_ticks == 128) {
-                        printfCenter(getCurrentScreenBuffer(), 31, "Press any key to continue.");
-                        story__animation = 0;
-                        story__local_ticks = 64;
-                    }
+                    printContinueAction(31);
 
-                    if (keyData.isPressed == 1) {
-                        story__page++;
-                        story__local_ticks = 0;
-                        clearScreenBuffer(getNextScreenBufferIndex());
-                        switchNextScreenBuffer();
-                    }
+                    story__page++;
+                    story__local_ticks = 0;
+                    clearScreenBuffer(getNextScreenBufferIndex());
+                    switchNextScreenBuffer();
                 }
                 break;
             case 1:
@@ -200,25 +177,39 @@ void story() {
                     printfCenter(getNextScreenBuffer(), 17, "\\ : ????");
                     switchNextScreenBuffer();
                 } else if (story__local_ticks > 64) {
-                    if (story__animation == 0 && story__local_ticks == 96) {
-                        clearConsoleLines(getCurrentScreenBuffer(), 31, 31);
-                        story__animation = 1;
-                    } else if (story__animation == 1 && story__local_ticks == 128) {
-                        printfCenter(getCurrentScreenBuffer(), 31, "Press any key to start.");
-                        story__animation = 0;
-                        story__local_ticks = 64;
+                    printContinueAction(31);
+
+                    story__page++;
+                    story__local_ticks = 0;
+                    clearScreenBuffer(getNextScreenBufferIndex());
+
+                    initPlayer();
+                    createPlayer((struct Point) { 1, 1 });
+
+                    int length = asciiArtLength(getSlimeStats());
+                    for (int i = 0; i < length; i++) {
+                        printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
                     }
 
-                    if (keyData.isPressed == 1) {
-                        story__page++;
-                        story__local_ticks = 0;
-                        clearScreenBuffer(getNextScreenBufferIndex());
-
-                        struct Point rb = { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 };
-                        printEdgeLines(getNextScreenBuffer(), zz, rb);
-
-                        switchNextScreenBuffer();
-                    }
+//                    struct Point rb = { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 };
+//                    printEdgeLines(getNextScreenBuffer(), zz, rb);
+//
+//                    switchNextScreenBuffer();
+//
+//                    initPlayer();
+//
+//                    int try = 0;
+//                    while (1) {
+//                        if (criticalCheck()) {
+//                            printfInInformationBox(2, "크리티컬!");
+//                            break;
+//                        } else {
+//                            printfInInformationBox(2, "ㄲㅂ %d", try);
+//                            try++;
+//                        }
+//                        Sleep(500);
+//                    }
+//                    playerDead("멍청이");
                 }
                 break;
             default:

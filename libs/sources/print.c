@@ -1,4 +1,4 @@
-#include "../allinone.h"
+#include "../manager.h"
 
 void printfCenter(HANDLE screen, int y, char* str, ...) {
     struct Point size = getConsoleSize();
@@ -54,7 +54,7 @@ void clearConsoleLines(HANDLE screen, int start_y, int end_y) {
     refreshScreenBuffer();
 }
 
-int past_level = 0; // 0 : 하얀색 1 : 파란색 3 : 노란색 4 : 빨간색
+int past_level = 0; // 0 : 하얀색 1 : 파란색 2 : 노란색 3 : 빨간색
 char past_str[1024] = ""; // 1024 is enough
 void printfInInformationBox(int level, char *str, ...) {
     struct Point size = getConsoleSize();
@@ -119,6 +119,41 @@ void printfInInformationBox(int level, char *str, ...) {
 }
 
 // extra functions
+
+void printContinueAction(int y) {
+    char* str = "Press any key to continue.";
+    int len = (int) strlen(str);
+
+    int x = (getConsoleSize().x - len) / 2;
+
+    HANDLE buffer = getCurrentScreenBuffer();
+    SetConsoleActiveScreenBuffer(buffer);
+
+    int animation = 0;
+
+    unsigned __int64 start_tick = GetTickCount64();
+    unsigned __int64 ticks = 0;
+    while (1) {
+        ticks = GetTickCount64() - start_tick;
+
+        if (animation == 0 && ticks >= 500 && ticks < 1000) {
+            clearConsoleLines(buffer, y, y);
+            animation = 1;
+        } else if (animation == 1 && ticks >= 1000) {
+            resetColor(buffer);
+            gotoXY(buffer, x, y);
+            WriteFile(buffer, str, len, NULL, NULL);
+            start_tick = GetTickCount64();
+            animation = 0;
+        }
+
+        if (getInput()) {
+            refreshScreenBuffer();
+//                CloseHandle(buffer);
+            break;
+        }
+    }
+}
 
 void printInformationBoxLine(HANDLE screen) {
     struct Point consoleSize = {

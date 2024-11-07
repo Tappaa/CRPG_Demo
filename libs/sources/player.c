@@ -1,13 +1,21 @@
-#include "../allinone.h"
+#include "../manager.h"
 
+struct Point player_relative_pos = { 0, 0 };
+struct Point player_absolute_pos = { 0, 0 };
 struct player_stats player = { };
+
+int player_dead = 0;
+int player_fight = 0;
+int player_move = 0;
 
 void initPlayer() {
     strcpy(player.character_symbol, "웃");
-    player.hp = 70;
+    player.max_hp = 70;
+    player.hp = player.max_hp;
     player.hp_plus_per_level = 10; // max hp = 70 + 10 * 5 = 120
 
-    player.mp = 30;
+    player.max_mp = 30;
+    player.mp = player.max_mp;
     player.mp_plus_per_level = 5; // max mp = 30 + 5 * 5 = 55
 
     player.atk = 5;
@@ -24,17 +32,128 @@ void initPlayer() {
     player.critical_damage_multiplier = 2;
 }
 
+void createPlayer(struct Point pos) {
+    player_relative_pos = pos;
+    // todo init world map
+    printfXY(getNextScreenBuffer(), pos.x, pos.y, player.character_symbol);
+    switchNextScreenBuffer();
+    setPlayerMove(1);
+}
+
 void levelUp() {
     if (player.level >= player.max_level) {
-        printfInInformationBox(4, "[!] 레벨업을 할 수 없습니다. 최대 레벨에 도달했습니다.");
+        printfInInformationBox(3, "[!] 레벨업을 할 수 없습니다. 최대 레벨에 도달했습니다.");
         return;
     }
 
-    player.hp += player.hp_plus_per_level;
-    player.mp += player.mp_plus_per_level;
+    player.max_hp += player.hp_plus_per_level;
+    player.hp = player.max_hp;
+    player.max_mp += player.mp_plus_per_level;
+    player.mp = player.max_mp;
+
     player.atk += player.atk_plus_per_level;
     player.def += player.def_plus_per_level;
     player.critical_chance += player.critical_plus_per_level;
     player.level++;
+
+    printfInInformationBox(1, "[!] '플레이어'가 레벨업을 했습니다! 현재 레벨: %d", player.level);
 }
 
+
+void fightEnemy(struct enemy_stats enemy) {
+
+}
+
+extern void ExitGame();
+void playerDead(char* reason) {
+    player_dead = 1;
+    printfInInformationBox(3, "[!] '플레이어'가 사망했습니다. 사망 원인: %s", reason);
+
+    Sleep(1000);
+    clearScreenBuffer(getCurrentScreenBufferIndex());
+    refreshScreenBuffer();
+
+    printContinueAction(31);
+    printfInInformationBox(1, "게임을 종료합니다.");
+    Sleep(1000);
+    ExitGame();
+}
+
+int movePlayer(int direction) {
+    struct Point tempPos = getPlayerRelativePosition();
+
+    int playerCharLength = (int) utf8_strlen(player.character_symbol);
+    char blank[playerCharLength + 1];
+    for (int i = 0; i < playerCharLength; i++) {
+        blank[i] = ' ';
+    }
+
+    switch (direction) {
+        case 0:
+            tempPos.y--;
+            break;
+        case 1:
+            tempPos.x += playerCharLength;
+            break;
+        case 2:
+            tempPos.y++;
+            break;
+        case 3:
+            tempPos.x -= playerCharLength;
+            break;
+        default:
+            return 0;
+    }
+
+    if (isCrashed(0, tempPos) == 5) { // todo mapNum
+        return 0;
+    }
+
+    // delete before position
+    printfXY(getNextScreenBuffer(), player_relative_pos.x, player_relative_pos.y, blank);
+    // move player
+    printfXY(getNextScreenBuffer(), tempPos.x, tempPos.y, player.character_symbol);
+    switchNextScreenBuffer();
+
+    player_relative_pos = tempPos;
+
+    return 1;
+}
+
+int mapMovePlayer(int mapNum, struct Point pos) {
+
+}
+
+
+struct Point getPlayerRelativePosition() {
+    return player_relative_pos;
+}
+
+struct Point getPlayerAbsolutePosition() {
+    return player_absolute_pos;
+}
+
+
+void setPlayerMove(int move) {
+    player_move = move;
+}
+
+
+int isPlayerDead() {
+    return player_dead;
+}
+
+int isPlayerFight() {
+    return player_fight;
+}
+
+int canPlayerMove() {
+    return player_move;
+}
+
+int criticalCheck() {
+    int random = (rand() % 100) + 1;
+    printfInInformationBox(0, "[Debug] random: %d, player.critical_chance: %d", random, player.critical_chance);
+
+    return random <= player.critical_chance;
+}

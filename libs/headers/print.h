@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 
 void printfCenter(HANDLE screen, int y, char* str, ...);
@@ -8,5 +9,6 @@ void printfInInformationBox(int level, char *str, ...); // level : 0 : 하얀색
 
 // extra functions
 
+void printContinueAction(int y);
 void printInformationBoxLine(HANDLE screen);
 void printEdgeLines(HANDLE screen, struct Point pos1, struct Point pos2);

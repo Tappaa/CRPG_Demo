@@ -1,4 +1,8 @@
+#pragma once
 #include <string.h>
+#include <conio.h>
+#include <time.h>
+#include <stdlib.h>
 
 #define buffer_size 1024
 
@@ -15,10 +19,7 @@
 #define KEY_NULL 0
 /* in game inputs */
 
-struct Key {
-    int key;
-    int isPressed;
-};
-
 struct Point getPrintCenter(char *str, ...);
 unsigned long long utf8_strlen(const char* str);
+
+void setRandomSeed(unsigned int seed);

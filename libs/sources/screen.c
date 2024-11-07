@@ -1,4 +1,4 @@
-#include "../allinone.h"
+#include "../manager.h"
 
 struct Point zz = {0, 0 };
 
@@ -116,9 +116,9 @@ void clearScreenBuffer(int index) {
     COORD coord = {0, 0};
     DWORD written;
     FillConsoleOutputCharacter(screenBuffer[index], ' ', (getConsoleSize().x + 1) *
-                                            getAvailableConsoleHeight(), coord, &written);
+                                            (getAvailableConsoleHeight() + 1), coord, &written);
     FillConsoleOutputAttribute(screenBuffer[index], 0, (getConsoleSize().x + 1) *
-                                          getAvailableConsoleHeight(), coord, &written);
+                                          (getAvailableConsoleHeight() + 1), coord, &written);
 
     printInformationBoxLine(screenBuffer[index]);
 }

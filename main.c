@@ -1,5 +1,4 @@
-#include <conio.h>
-#include "libs/allinone.h"
+#include "libs/manager.h"
 
 struct Point con_size;
 
@@ -20,15 +19,12 @@ unsigned long long now_ticks;
 
 int exit_game = 0;
 
-struct Key keyData;
-
 void ExitGame() {
     exit_game = 1;
 }
 
 int main() {
-    // get console window handle
-    HWND hwnd = GetConsoleWindow();
+    setRandomSeed(time(NULL));
 
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
@@ -50,8 +46,6 @@ int main() {
     // do not change console size
     printfInInformationBox(3, "[경고] 콘솔창 크기를 변경하지 마세요. (변경시 프로그램이 종료됩니다)");
 
-    int key; // key input buffer
-    int keyPressed = 0; // key pressed check
     int secret[10] = { 0 }; // secret code buffer
     unsigned long long before_tick = 0; // duplicate check
     while (1) { // runtime loop
@@ -63,46 +57,23 @@ int main() {
             exit(0);
         }
 
-        if (isDisabledKeyInput() == 0) {
-            // get key input
-            if (_kbhit()) {
-                key = _getch();
-                if (key == 224) { // detect movement key
-                    key = _getch();
-                    secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
+        if (getInput()) { // get key input
+            secret_code_runner(secret, keyData.key, 10);
 
-                    keyData.key = key;
-                }
-                else { // detect other key
-                    secret_code_runner(secret, key, sizeof(secret) / sizeof(int));
-
-                    keyData.key = key;
-                }
-            } else {
-            }
-
-            // check is not background
-            if (GetForegroundWindow() == hwnd) {
-                // check key pressed
-                int before = keyPressed;
-                for (key = 0; key < 256; key++) {
-                    // ignore mouse buttons
-                    if (key == VK_LBUTTON || key == VK_RBUTTON || key == VK_MBUTTON ||
-                        key == VK_XBUTTON1 || key == VK_XBUTTON2) {
-                        continue;
-                    }
-
-                    if (GetAsyncKeyState(key) & 0x8000) {
-                        keyPressed += 1;
-                        // prevent overflow
-                        keyPressed %= 2;
-                    }
-                }
-
-                if (before != keyPressed) {
-                    keyData.isPressed = 1;
-                } else {
-                    keyData.isPressed = 0;
+            if (canPlayerMove()) {
+                switch (keyData.key) {
+                    case KEY_UP:
+                        movePlayer(0);
+                        break;
+                    case KEY_RIGHT:
+                        movePlayer(1);
+                        break;
+                    case KEY_DOWN:
+                        movePlayer(2);
+                        break;
+                    case KEY_LEFT:
+                        movePlayer(3);
+                        break;
                 }
             }
         }
