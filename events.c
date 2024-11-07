@@ -36,6 +36,11 @@ void intro() {
         case 1000:
             printfXY(getCurrentScreenBuffer(), 0, 0, "Welcome to C-RPG");
             printfXY(getCurrentScreenBuffer(), 0, 1, "This is a simple RPG game made with C language.");
+
+            int length = asciiArtLength(getSlimeStats());
+            for (int i = 0; i < length; i++) {
+                printfXY(getCurrentScreenBuffer(), 50, 10 + i, getSlimeStats().ascii_art[i]);
+            }
             break;
         case 4000:
             clearConsoleLines(getCurrentScreenBuffer(), 0, getAvailableConsoleHeight());

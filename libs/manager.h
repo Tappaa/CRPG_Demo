@@ -7,4 +7,4 @@
 
 #include "headers/obstacle.h"
 
-#define game_version "0.0.11"
+#define game_version "0.0.12"
