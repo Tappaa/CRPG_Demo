@@ -36,7 +36,6 @@ void createPlayer(struct Point pos) {
     player_relative_pos = pos;
     // todo init world map
     printfXY(getNextScreenBuffer(), pos.x, pos.y, player.character_symbol);
-    switchNextScreenBuffer();
     setPlayerMove(1);
 }
 
@@ -81,6 +80,8 @@ void playerDead(char* reason) {
 
 int movePlayer(int direction) {
     struct Point tempPos = getPlayerRelativePosition();
+
+    copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
 
     int playerCharLength = (int) utf8_strlen(player.character_symbol);
     char blank[playerCharLength + 1];

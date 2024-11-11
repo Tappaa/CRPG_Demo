@@ -79,7 +79,8 @@ int getScreenBufferCount() {
 
 void switchNextScreenBuffer() {
     currentScreenBufferIndex = getNextScreenBufferIndex();
-    SetConsoleActiveScreenBuffer(screenBuffer[getNextScreenBufferIndex()]);
+    SetConsoleActiveScreenBuffer(screenBuffer[getCurrentScreenBufferIndex()]);
+//    printfInInformationBox(0, "[Debug] Screen buffer switched to %d", currentScreenBufferIndex);
 }
 
 void switchScreenBuffer(int index) {
@@ -108,14 +109,31 @@ void refreshScreenBuffer() {
 }
 
 void copyScreenBuffer(int sourceIndex, int destIndex) {
-    screenBuffer[destIndex] = screenBuffer[sourceIndex];
+    COORD bufferSize = {(short) getConsoleSize().x, (short) getConsoleSize().y};
+    SMALL_RECT readRegion = {0, 0, bufferSize.X, bufferSize.Y};
+    COORD bufferCoord = {0, 0};
+    CHAR_INFO* charInfoBuffer = (CHAR_INFO*)malloc(sizeof(CHAR_INFO) * bufferSize.X * bufferSize.Y);
+
+    if (charInfoBuffer == NULL) {
+        // error memory allocation
+        return;
+    }
+
+    if (!ReadConsoleOutputW(screenBuffer[sourceIndex], charInfoBuffer, bufferSize, bufferCoord, &readRegion)) {
+        free(charInfoBuffer);
+        return;
+    }
+
+    if (!WriteConsoleOutputW(screenBuffer[destIndex], charInfoBuffer, bufferSize, bufferCoord, &readRegion)) {
+    }
+
+    free(charInfoBuffer);
 }
 
-/// @Note : if you want to clear current screen buffer, after use this function, you must use refreshScreenBuffer()
 void clearScreenBuffer(int index) {
     COORD coord = {0, 0};
     DWORD written;
-    FillConsoleOutputCharacter(screenBuffer[index], ' ', (getConsoleSize().x + 1) *
+    FillConsoleOutputCharacterW(screenBuffer[index], ' ', (getConsoleSize().x + 1) *
                                             (getAvailableConsoleHeight() + 1), coord, &written);
     FillConsoleOutputAttribute(screenBuffer[index], 0, (getConsoleSize().x + 1) *
                                           (getAvailableConsoleHeight() + 1), coord, &written);

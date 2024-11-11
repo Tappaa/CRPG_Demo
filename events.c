@@ -32,6 +32,24 @@ void secret_code_runner(int* pass, int enter, int size) {
 
 int intro__dead = 0;
 void intro() {
+    intro__dead = 1;
+    int length = asciiArtLength(getSlimeStats());
+    for (int i = 0; i < length; i++) {
+        printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
+    }
+
+    printfXY(getNextScreenBuffer(), 20, 20, getWallSymbol());
+    printfXY(getNextScreenBuffer(), 20, 21, getWallSymbol());
+    printfXY(getNextScreenBuffer(), 20, 22, getWallSymbol());
+    printfXY(getNextScreenBuffer(), 20, 23, getWallSymbol());
+    printfXY(getNextScreenBuffer(), 20, 24, getWallSymbol());
+
+    initPlayer();
+    createPlayer((struct Point) { 1, 1 });
+
+    switchNextScreenBuffer();
+
+    return; // TODO : skip intro
     switch (now_ticks) {
         case 1000:
             printfXY(getCurrentScreenBuffer(), 0, 0, "Welcome to C-RPG");
@@ -67,11 +85,13 @@ void intro() {
             break;
         case 11000:
             printfCenter(getNextScreenBuffer(), 30, "Loading complete.");
+            copyScreenBuffer(getNextScreenBufferIndex(), getCurrentScreenBufferIndex());
             switchNextScreenBuffer();
             break;
         case 13000:
-            printfCenter(getCurrentScreenBuffer(), 31, "Press any key to continue.");
+            printfCenter(getNextScreenBuffer(), 31, "Press any key to continue.");
             printfInInformationBox(1, "게임을 시작할 준비가 되었습니다.");
+            switchNextScreenBuffer();
             break;
         default:
             if (now_ticks > 13000) {
@@ -88,7 +108,6 @@ void intro() {
                 printfCenter(getNextScreenBuffer(), 31, "게임 시작");
                 setColor(getNextScreenBuffer(), BLACK, WHITE);
                 printfCenter(getNextScreenBuffer(), 32, "게임 종료");
-                copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
                 switchNextScreenBuffer();
             }
             break;
@@ -100,6 +119,9 @@ int start_screen_button__selected__local_ticks = 16;
 int start_screen_button__dead = 0;
 void start_screen_button() {
     if (intro__dead == 1) {
+        start_screen_button__dead = 1;
+        return; // TODO : skip intro
+
         // button move delay
         if (start_screen_button__selected__local_ticks > 0) {
             start_screen_button__selected__local_ticks--;
@@ -149,6 +171,9 @@ int story__page = 0;
 int story__dead = 0;
 void story() {
     if (start_screen_button__dead == 1) {
+        story__dead = 1;
+        return; // TODO : skip intro
+
         story__local_ticks++;
 
         switch (story__page) {
@@ -188,13 +213,23 @@ void story() {
                     story__local_ticks = 0;
                     clearScreenBuffer(getNextScreenBufferIndex());
 
-                    initPlayer();
-                    createPlayer((struct Point) { 1, 1 });
-
                     int length = asciiArtLength(getSlimeStats());
                     for (int i = 0; i < length; i++) {
                         printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
                     }
+
+                    printfXY(getNextScreenBuffer(), 20, 20, getWallSymbol());
+                    printfXY(getNextScreenBuffer(), 20, 21, getWallSymbol());
+                    printfXY(getNextScreenBuffer(), 20, 22, getWallSymbol());
+                    printfXY(getNextScreenBuffer(), 20, 23, getWallSymbol());
+                    printfXY(getNextScreenBuffer(), 20, 24, getWallSymbol());
+
+                    initPlayer();
+                    createPlayer((struct Point) { 1, 1 });
+
+                    switchNextScreenBuffer();
+
+                    story__dead = 1;
 
 //                    struct Point rb = { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 };
 //                    printEdgeLines(getNextScreenBuffer(), zz, rb);
