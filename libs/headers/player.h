@@ -35,7 +35,7 @@ void playerDead(char* reason); // player dead event
 int movePlayer(int direction); // move player to direction(0: up, 1: right, 2: down, 3: left). return 1 if player moved, 0 if not
 int mapMovePlayer(int mapNum, struct Point pos); // move player to another map
 
-struct Point getPlayerRelativePosition(); // get player relative position
+struct Point getPlayerPosition(); // get player relative position
 struct Point getPlayerAbsolutePosition(); // get player absolute position
 
 void setPlayerMove(int move); // set player move

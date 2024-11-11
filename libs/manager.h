@@ -4,7 +4,8 @@
 #include "headers/print.h"
 #include "headers/player.h"
 #include "headers/enemy.h"
+#include "headers/map.h"
 
 #include "headers/obstacle.h"
 
-#define game_version "0.0.13"
+#define game_version "0.1.0"

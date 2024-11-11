@@ -10,5 +10,6 @@ add_executable(CRPG_Demo main.c events.c libs/manager.h
         libs/headers/print.h libs/sources/print.c
         libs/headers/player.h libs/sources/player.c
         libs/headers/enemy.h libs/sources/enemy.c
+        libs/headers/map.h libs/sources/map.c
 
         libs/headers/obstacle.h libs/sources/obstacle.c)

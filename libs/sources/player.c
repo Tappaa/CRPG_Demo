@@ -1,7 +1,7 @@
 #include "../manager.h"
 
-struct Point player_relative_pos = { 0, 0 };
-struct Point player_absolute_pos = { 0, 0 };
+struct Point player_pos = {0, 0 };
+int player_map = 0;
 struct player_stats player = { };
 
 int player_dead = 0;
@@ -33,7 +33,7 @@ void initPlayer() {
 }
 
 void createPlayer(struct Point pos) {
-    player_relative_pos = pos;
+    player_pos = pos;
     // todo init world map
     printfXY(getNextScreenBuffer(), pos.x, pos.y, player.character_symbol);
     setPlayerMove(1);
@@ -79,11 +79,11 @@ void playerDead(char* reason) {
 }
 
 int movePlayer(int direction) {
-    struct Point tempPos = getPlayerRelativePosition();
+    struct Point tempPos = getPlayerPosition();
 
     copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
 
-    int playerCharLength = (int) utf8_strlen(player.character_symbol);
+    int playerCharLength = (int) utf8Strlen(player.character_symbol);
     char blank[playerCharLength + 1];
     for (int i = 0; i < playerCharLength; i++) {
         blank[i] = ' ';
@@ -106,17 +106,21 @@ int movePlayer(int direction) {
             return 0;
     }
 
-    if (isCrashed(0, tempPos) == 5) { // todo mapNum
+    int crashed = isCrashed(player_map, (struct Point) { tempPos.x, tempPos.y });
+//    printfInInformationBox(0, "[Debug] isCrashed: %d", crashed);
+    if (crashed == 5) {
+        return 0;
+    } else if (crashed == 1) {
         return 0;
     }
 
     // delete before position
-    printfXY(getNextScreenBuffer(), player_relative_pos.x, player_relative_pos.y, blank);
+    printfXY(getNextScreenBuffer(), player_pos.x, player_pos.y, blank);
     // move player
     printfXY(getNextScreenBuffer(), tempPos.x, tempPos.y, player.character_symbol);
     switchNextScreenBuffer();
 
-    player_relative_pos = tempPos;
+    player_pos = tempPos;
 
     return 1;
 }
@@ -126,13 +130,13 @@ int mapMovePlayer(int mapNum, struct Point pos) {
 }
 
 
-struct Point getPlayerRelativePosition() {
-    return player_relative_pos;
+struct Point getPlayerPosition() {
+    return player_pos;
 }
 
-struct Point getPlayerAbsolutePosition() {
-    return player_absolute_pos;
-}
+//struct Point getPlayerAbsolutePosition() {
+//    return player_absolute_pos;
+//}
 
 
 void setPlayerMove(int move) {

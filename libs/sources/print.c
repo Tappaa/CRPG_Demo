@@ -9,7 +9,7 @@ void printfCenter(HANDLE screen, int y, char* str, ...) {
     vsnprintf(buffer, sizeof(buffer), str, args);
     va_end(args);
 
-    int len = (int) utf8_strlen(buffer);
+    int len = (int) utf8Strlen(buffer);
     int x = (size.x - len) / 2;
     gotoXY(screen, x, y);
 

@@ -20,6 +20,7 @@
 /* in game inputs */
 
 struct Point getPrintCenter(char *str, ...);
-unsigned long long utf8_strlen(const char* str);
+unsigned long long utf8Strlen(const char* str);
+int charCheck (unsigned char c);
 
 void setRandomSeed(unsigned int seed);

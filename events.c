@@ -33,19 +33,12 @@ void secret_code_runner(int* pass, int enter, int size) {
 int intro__dead = 0;
 void intro() {
     intro__dead = 1;
-    int length = asciiArtLength(getSlimeStats());
-    for (int i = 0; i < length; i++) {
-        printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
-    }
 
-    printfXY(getNextScreenBuffer(), 20, 20, getWallSymbol());
-    printfXY(getNextScreenBuffer(), 20, 21, getWallSymbol());
-    printfXY(getNextScreenBuffer(), 20, 22, getWallSymbol());
-    printfXY(getNextScreenBuffer(), 20, 23, getWallSymbol());
-    printfXY(getNextScreenBuffer(), 20, 24, getWallSymbol());
+    char* test = getMapFromFile(0);
+    printfXY(getNextScreenBuffer(), 0, 0, "%s", test);
 
     initPlayer();
-    createPlayer((struct Point) { 1, 1 });
+    createPlayer(getPlayerStartLocation(0));
 
     switchNextScreenBuffer();
 

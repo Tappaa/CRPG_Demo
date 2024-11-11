@@ -40,11 +40,27 @@ char* getBossSymbol() {
     return boss_symbol;
 }
 
-int isCrashed(int mapNum, struct Point pos) { // todo mapNum
+int isCrashed(int mapNum, struct Point pos) {
+    // wall
+//    printfInInformationBox(0, "[Debug] %s %d %d", getMapDataXY(mapNum, pos), pos.x, pos.y);
+    if (strcmp(getMapDataXY(mapNum, pos), getWallSymbol()) == 0) {
+        return 1;
+    }
+    // slime
+    if (strcmp(getMapDataXY(mapNum, pos), getSlimeSymbol()) == 0) {
+        return 2;
+    }
+    // boss
+    if (strcmp(getMapDataXY(mapNum, pos), getBossSymbol()) == 0) {
+        return 3;
+    }
+    // move another map
+    if (strcmp(getMapDataXY(mapNum, pos), getMoveAnotherMapSymbol()) == 0) {
+        return 4;
+    }
     // max relative position
-    if (pos.x < 0 || pos.y <= 0 || pos.x >= getConsoleSize().x || pos.y >
-
-    getAvailableConsoleHeight()) {
+    if (pos.x < 1 || pos.y <= 0 || pos.x >= getConsoleSize().x - 1 || pos.y > getAvailableConsoleHeight()) {
         return 5;
     }
+    return 0;
 }
