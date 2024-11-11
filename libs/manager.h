@@ -9,3 +9,8 @@
 #include "headers/obstacle.h"
 
 #define game_version "0.1.0"
+
+// TODO: Add more maps
+// TODO: fix TODOs
+// TODO: Add fight system
+// TODO: Add ending scene
