@@ -32,10 +32,14 @@ void initPlayer() {
     player.critical_damage_multiplier = 2;
 }
 
-void createPlayer(struct Point pos) {
+void createPlayer(int mapNum, struct Point pos) {
     player_pos = pos;
-    // todo init world map
+    player_map = mapNum;
+
+    mapPrint(mapNum);
+    setColor(getNextScreenBuffer(), BLACK, SkyBlue);
     printfXY(getNextScreenBuffer(), pos.x, pos.y, player.character_symbol);
+    resetColor(getNextScreenBuffer());
     setPlayerMove(1);
 }
 
@@ -84,10 +88,6 @@ int movePlayer(int direction) {
     copyScreenBuffer(getCurrentScreenBufferIndex(), getNextScreenBufferIndex());
 
     int playerCharLength = (int) utf8Strlen(player.character_symbol);
-    char blank[playerCharLength + 1];
-    for (int i = 0; i < playerCharLength; i++) {
-        blank[i] = ' ';
-    }
 
     switch (direction) {
         case 0:
@@ -108,16 +108,36 @@ int movePlayer(int direction) {
 
     int crashed = isCrashed(player_map, (struct Point) { tempPos.x, tempPos.y });
 //    printfInInformationBox(0, "[Debug] isCrashed: %d", crashed);
-    if (crashed == 5) {
-        return 0;
-    } else if (crashed == 1) {
-        return 0;
+    switch (crashed) {
+        case 5: // max relative position
+            printfInInformationBox(0, "[!] 이동할 수 없는 위치입니다.");
+            return 0;
+        case 1: // wall
+            printfInInformationBox(0, "[!] 벽에 부딪혔습니다.");
+            return 0;
+        case 2: // slime
+            printfInInformationBox(0, "[!] 슬라임을 만났습니다.");
+            fightEnemy(getSlimeStats());
+            setPlayerMove(0);
+            return 0;
+        case 3: // boss
+            printfInInformationBox(0, "[!] 보스를 만났습니다.");
+            fightEnemy(getBossStats());
+            setPlayerMove(0);
+            return 0;
+        case 4: // move another map
+            printfInInformationBox(0, "[!] 다음 맵으로 이동합니다.");
+            return 0;
+        default:
+            break;
     }
 
     // delete before position
-    printfXY(getNextScreenBuffer(), player_pos.x, player_pos.y, blank);
+    printfXY(getNextScreenBuffer(), player_pos.x, player_pos.y, "  ");
     // move player
+    setColor(getNextScreenBuffer(), BLACK, SkyBlue);
     printfXY(getNextScreenBuffer(), tempPos.x, tempPos.y, player.character_symbol);
+    resetColor(getNextScreenBuffer());
     switchNextScreenBuffer();
 
     player_pos = tempPos;

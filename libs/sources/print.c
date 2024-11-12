@@ -4,9 +4,10 @@ void printfCenter(HANDLE screen, int y, char* str, ...) {
     struct Point size = getConsoleSize();
     va_list args;
     va_start(args, str);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
 
-    char buffer[buffer_size];
-    vsnprintf(buffer, sizeof(buffer), str, args);
+    vsnprintf(buffer, bufferSize, str, args);
     va_end(args);
 
     int len = (int) utf8Strlen(buffer);
@@ -15,29 +16,36 @@ void printfCenter(HANDLE screen, int y, char* str, ...) {
 
     WriteFile(screen, buffer, (DWORD) strlen(buffer), NULL, NULL);
     refreshScreenBuffer();
+    free(buffer);
 }
 
 void printfXY(HANDLE screen, int x, int y, char* str, ...) {
     gotoXY(screen, x, y);
     va_list args;
     va_start(args, str);
-    char buffer[buffer_size];
-    vsnprintf(buffer, sizeof(buffer), str, args);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
+
+    vsnprintf(buffer, bufferSize, str, args);
     va_end(args);
 
     WriteFile(screen, buffer, (DWORD) strlen(buffer), NULL, NULL);
     refreshScreenBuffer();
+    free(buffer);
 }
 
 void printf_Buffer(HANDLE screen, char* str, ...) {
     va_list args;
     va_start(args, str);
-    char buffer[buffer_size];
-    vsnprintf(buffer, sizeof(buffer), str, args);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
+
+    vsnprintf(buffer, bufferSize, str, args);
     va_end(args);
 
     WriteFile(screen, buffer, (DWORD) strlen(buffer), NULL, NULL);
     refreshScreenBuffer();
+    free(buffer);
 }
 
 void clearConsoleLines(HANDLE screen, int start_y, int end_y) {

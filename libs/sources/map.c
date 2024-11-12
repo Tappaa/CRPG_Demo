@@ -24,10 +24,11 @@ char* getMapFromFile(int mapNum) {
     char *mapData = (char *) malloc(size.st_size + 1);
     fread(mapData, size.st_size, 1, mapFile);
     mapData[size.st_size] = '\0';
+    fclose(mapFile);
     return mapData;
 }
 
-struct Point getPlayerStartLocation(int mapNum) { // TODO ADD Slime, Boss
+struct Point getPlayerStartLocation(int mapNum) {
     struct Point result = { 0, 0 };
     const char *mapData = getMapFromFile(mapNum);
 
@@ -83,6 +84,62 @@ char* getMapDataXY(int mapNum, struct Point target) {
             x += 2;
         }
     }
-//    printfInInformationBox(0, "[Debug] getMapDataXY: %s", result);
+//    printfInInformationBox(0, "[Debug] getMapDataXY: %s, x:%d, y:%d", result, x, y);
     return result;
+}
+
+void mapPrint(int mapNum) {
+    const char *mapData = getMapFromFile(mapNum);
+    struct Point pos = { 0, 0 };
+
+    while (*mapData != '\0' && *mapData != EOF) {
+        int char_len = charCheck((unsigned char)*mapData);
+
+        if (*mapData == '\n') {
+            pos.y++;
+            pos.x = 0;
+            mapData++;
+            continue;
+        }
+
+        char *str = (char *) malloc(char_len + 1);
+        for (int i = 0; i < char_len; i++) {
+            str[i] = mapData[i];
+        }
+        str[char_len] = '\0';
+
+        if (*str == '^') {
+            setColor(getNextScreenBuffer(), BLACK, GREEN);
+            printfXY(getNextScreenBuffer(), pos.x, pos.y, "%c", *mapData);
+            resetColor(getNextScreenBuffer());
+//            printfInInformationBox(0, "[Debug] ^ %d, %d", pos.x, pos.y);
+        } else if (*str == '|') {
+            // brown color
+            setColor(getNextScreenBuffer(), FOREGROUND_RED | FOREGROUND_GREEN, FOREGROUND_RED | FOREGROUND_GREEN);
+            printfXY(getNextScreenBuffer(), pos.x, pos.y, "%c", *mapData);
+            resetColor(getNextScreenBuffer());
+//            printfInInformationBox(0, "[Debug] | %d, %d", pos.x, pos.y);
+        } else if (*str == 'S') {
+            setColor(getNextScreenBuffer(), BLACK, GREEN);
+            printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", getSlimeSymbol());
+            resetColor(getNextScreenBuffer());
+//            printfInInformationBox(0, "[Debug] S %d, %d", pos.x, pos.y);
+        } else if (*str == 'B') {
+            setColor(getNextScreenBuffer(), BLACK, RED);
+            printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", getBossSymbol());
+            resetColor(getNextScreenBuffer());
+//            printfInInformationBox(0, "[Debug] B %d, %d", pos.x, pos.y);
+        } else {
+            printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", str);
+//            printfInInformationBox(0, "[Debug] %d, %d", pos.x, pos.y);
+        }
+
+        mapData += char_len;
+        if (char_len == 1) {
+            pos.x++;
+        } else {
+            pos.x += 2;
+        }
+    }
+//    free((char *) mapData);
 }

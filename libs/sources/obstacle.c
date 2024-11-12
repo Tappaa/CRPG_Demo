@@ -11,7 +11,7 @@ char* getPlayerSymbol() {
 char wall_symbol[5];
 
 char* getWallSymbol() {
-    strcpy(wall_symbol, "■"); // TODO: change this
+    strcpy(wall_symbol, "■");
 
     return wall_symbol;
 }
@@ -19,7 +19,7 @@ char* getWallSymbol() {
 char move_another_map_symbol[5];
 
 char* getMoveAnotherMapSymbol() {
-    strcpy(move_another_map_symbol, "⇨"); // TODO: change this
+    strcpy(move_another_map_symbol, "⇨");
 
     return move_another_map_symbol;
 }
@@ -47,11 +47,11 @@ int isCrashed(int mapNum, struct Point pos) {
         return 1;
     }
     // slime
-    if (strcmp(getMapDataXY(mapNum, pos), getSlimeSymbol()) == 0) {
+    if (*getMapDataXY(mapNum, pos) == 'S') {
         return 2;
     }
     // boss
-    if (strcmp(getMapDataXY(mapNum, pos), getBossSymbol()) == 0) {
+    if (*getMapDataXY(mapNum, pos) == 'B') {
         return 3;
     }
     // move another map

@@ -32,17 +32,14 @@ void secret_code_runner(int* pass, int enter, int size) {
 
 int intro__dead = 0;
 void intro() {
-    intro__dead = 1;
-
-    char* test = getMapFromFile(0);
-    printfXY(getNextScreenBuffer(), 0, 0, "%s", test);
-
-    initPlayer();
-    createPlayer(getPlayerStartLocation(0));
-
-    switchNextScreenBuffer();
-
-    return; // TODO : skip intro
+//    intro__dead = 1;
+//
+//    initPlayer();
+//    createPlayer(0, getPlayerStartLocation(0));
+//
+//    switchNextScreenBuffer();
+//
+//    return; //  : skip intro
     switch (now_ticks) {
         case 1000:
             printfXY(getCurrentScreenBuffer(), 0, 0, "Welcome to C-RPG");
@@ -112,8 +109,8 @@ int start_screen_button__selected__local_ticks = 16;
 int start_screen_button__dead = 0;
 void start_screen_button() {
     if (intro__dead == 1) {
-        start_screen_button__dead = 1;
-        return; // TODO : skip intro
+//        start_screen_button__dead = 1;
+//        return; //  : skip intro
 
         // button move delay
         if (start_screen_button__selected__local_ticks > 0) {
@@ -123,11 +120,11 @@ void start_screen_button() {
         if (start_screen_button__selected < 1 && keyData.key == KEY_DOWN && keyData.isPressed == 1 && start_screen_button__selected__local_ticks == 0) {
             start_screen_button__selected++;
             start_screen_button__selected__local_ticks = 16;
-            printfInInformationBox(0, "[Debug] Selected button: %d", start_screen_button__selected);
+//            printfInInformationBox(0, "[Debug] Selected button: %d", start_screen_button__selected);
         } else if (start_screen_button__selected > 0 && keyData.key == KEY_UP && keyData.isPressed == 1 && start_screen_button__selected__local_ticks == 0) {
             start_screen_button__selected--;
             start_screen_button__selected__local_ticks = 16;
-            printfInInformationBox(0, "[Debug] Selected button: %d", start_screen_button__selected);
+//            printfInInformationBox(0, "[Debug] Selected button: %d", start_screen_button__selected);
         }
 
         // draw buttons
@@ -164,8 +161,8 @@ int story__page = 0;
 int story__dead = 0;
 void story() {
     if (start_screen_button__dead == 1) {
-        story__dead = 1;
-        return; // TODO : skip intro
+//        story__dead = 1;
+//        return; //  : skip intro
 
         story__local_ticks++;
 
@@ -205,20 +202,26 @@ void story() {
                     story__page++;
                     story__local_ticks = 0;
                     clearScreenBuffer(getNextScreenBufferIndex());
-
-                    int length = asciiArtLength(getSlimeStats());
-                    for (int i = 0; i < length; i++) {
-                        printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
-                    }
-
-                    printfXY(getNextScreenBuffer(), 20, 20, getWallSymbol());
-                    printfXY(getNextScreenBuffer(), 20, 21, getWallSymbol());
-                    printfXY(getNextScreenBuffer(), 20, 22, getWallSymbol());
-                    printfXY(getNextScreenBuffer(), 20, 23, getWallSymbol());
-                    printfXY(getNextScreenBuffer(), 20, 24, getWallSymbol());
+                    switchNextScreenBuffer();
+                    clearScreenBuffer(getNextScreenBufferIndex());
+                    Sleep(500);
 
                     initPlayer();
-                    createPlayer((struct Point) { 1, 1 });
+                    createPlayer(0, getPlayerStartLocation(0));
+
+//                    int length = asciiArtLength(getSlimeStats());
+//                    for (int i = 0; i < length; i++) {
+//                        printfXY(getNextScreenBuffer(), 5, 1 + i, getSlimeStats().ascii_art[i]);
+//                    }
+//
+//                    printfXY(getNextScreenBuffer(), 20, 20, getWallSymbol());
+//                    printfXY(getNextScreenBuffer(), 20, 21, getWallSymbol());
+//                    printfXY(getNextScreenBuffer(), 20, 22, getWallSymbol());
+//                    printfXY(getNextScreenBuffer(), 20, 23, getWallSymbol());
+//                    printfXY(getNextScreenBuffer(), 20, 24, getWallSymbol());
+//
+//                    initPlayer();
+//                    createPlayer(0, (struct Point) { 1, 1 });
 
                     switchNextScreenBuffer();
 

@@ -10,7 +10,7 @@ struct skills {
 
 struct enemy_stats {
     char character_symbol[5];
-    char ascii_art[20][150];
+    char ascii_art[30][150];
     int hp;
     int mp;
     int atk;

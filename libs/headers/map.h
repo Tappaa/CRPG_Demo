@@ -3,3 +3,4 @@
 char* getMapFromFile(int mapNum);
 struct Point getPlayerStartLocation(int mapNum);
 char *getMapDataXY(int mapNum, struct Point pos);
+void mapPrint(int mapNum);

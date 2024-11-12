@@ -28,7 +28,7 @@ struct player_stats {
 extern struct player_stats player;
 
 void initPlayer(); // initialize player stats
-void createPlayer(struct Point pos); // create player
+void createPlayer(int mapNum, struct Point pos); // create player
 void levelUp(); // level up player
 void fightEnemy(struct enemy_stats enemy); // fight enemy
 void playerDead(char* reason); // player dead event
