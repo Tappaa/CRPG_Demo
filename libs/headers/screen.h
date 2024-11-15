@@ -34,18 +34,9 @@ void setDisabledKeyInput(int isDisabled);
 void gotoXY(HANDLE screen, int x, int y);
 struct Point getConsoleSize();
 struct Point getCursorPos();
-//void setCursorVisibility(int isVisible);
-//void setTextColor(int colorNum);
 void setColor(HANDLE screen, int backgroundColor, int textColor);
 void resetColor(HANDLE screen);
 int getAvailableConsoleHeight();
-
-// deprecated
-//int saveConsoleLayer(int layer);
-//CHAR_INFO getConsoleLayer(int layer);
-//int printConsoleLayer(int layer);
-//int resetConsoleLayer(int layer);
-//int resetAllConsoleLayer();
 
 void initScreenBuffer(int cursorVisibility);
 int getCurrentScreenBufferIndex();
@@ -55,9 +46,15 @@ void switchNextScreenBuffer();
 HANDLE getCurrentScreenBuffer();
 HANDLE getNextScreenBuffer();
 void switchScreenBuffer(int index);
+void setReservedScreenBuffer(int index, int isReserved);
+void setAllReservedScreenBuffer(int isReserved);
+int isReservedScreenBufferByHANDLE(HANDLE screen);
+int isReservedScreenBufferByIndex(int index);
 HANDLE getScreenBuffer(int index);
 HANDLE* getAllScreens();
 void refreshScreenBuffer();
-void copyScreenBuffer(int sourceIndex, int destIndex);
-void clearScreenBuffer(int index);
+void copyScreenBufferByHANDLE(HANDLE source, HANDLE dest);
+void copyScreenBufferByIndex(int sourceIndex, int destIndex);
+void clearScreenBufferByHANDLE(HANDLE screen);
+void clearScreenBufferByIndex(int index);
 void destroyScreenBuffer(HANDLE* screen);

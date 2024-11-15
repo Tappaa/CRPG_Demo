@@ -88,7 +88,15 @@ char* getMapDataXY(int mapNum, struct Point target) {
     return result;
 }
 
+int slimeCount = 0;
+struct Point *slimePos = NULL;
+int bossCount = 0;
+struct Point *bossPos = NULL;
 void mapPrint(int mapNum) {
+    slimeCount = 0;
+    bossCount = 0;
+
+
     const char *mapData = getMapFromFile(mapNum);
     struct Point pos = { 0, 0 };
 
@@ -123,11 +131,19 @@ void mapPrint(int mapNum) {
             setColor(getNextScreenBuffer(), BLACK, GREEN);
             printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", getSlimeSymbol());
             resetColor(getNextScreenBuffer());
+
+            slimeCount++;
+            slimePos = (struct Point *) realloc(slimePos, slimeCount * sizeof(struct Point));
+            slimePos[slimeCount - 1] = pos;
 //            printfInInformationBox(0, "[Debug] S %d, %d", pos.x, pos.y);
         } else if (*str == 'B') {
             setColor(getNextScreenBuffer(), BLACK, RED);
             printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", getBossSymbol());
             resetColor(getNextScreenBuffer());
+
+            bossCount++;
+            bossPos = (struct Point *) realloc(bossPos, bossCount * sizeof(struct Point));
+            bossPos[bossCount - 1] = pos;
 //            printfInInformationBox(0, "[Debug] B %d, %d", pos.x, pos.y);
         } else {
             printfXY(getNextScreenBuffer(), pos.x, pos.y, "%s", str);
@@ -142,4 +158,22 @@ void mapPrint(int mapNum) {
         }
     }
 //    free((char *) mapData);
+}
+
+int getIndexFromSlimePos(struct Point pos) {
+    for (int i = 0; i < slimeCount; i++) {
+        if (slimePos[i].x == pos.x && slimePos[i].y == pos.y) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int getIndexFromBossPos(struct Point pos) {
+    for (int i = 0; i < bossCount; i++) {
+        if (bossPos[i].x == pos.x && bossPos[i].y == pos.y) {
+            return i;
+        }
+    }
+    return -1;
 }

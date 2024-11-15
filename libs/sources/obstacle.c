@@ -48,10 +48,18 @@ int isCrashed(int mapNum, struct Point pos) {
     }
     // slime
     if (*getMapDataXY(mapNum, pos) == 'S') {
+        // already fought
+        if (foughtSlimes != NULL && foughtSlimes[getIndexFromSlimePos(pos)]) {
+            return 0;
+        }
         return 2;
     }
     // boss
     if (*getMapDataXY(mapNum, pos) == 'B') {
+        // already fought
+        if (foughtBosses != NULL && foughtBosses[getIndexFromBossPos(pos)]) {
+            return 0;
+        }
         return 3;
     }
     // move another map

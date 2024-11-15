@@ -2,7 +2,10 @@
 
 struct enemy_stats getSlimeStats() {
     struct enemy_stats slime = {
+            .enemy_name = "슬라임",
             .character_symbol = "●",
+            .skill_count = 0,
+            .color = GREEN,
             .ascii_art = {
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀        ⢀⣠⣤⣤⣤⡴⠶⠶⠶⢶⣦⣤⣤⣄⣀",
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣤⠶⠟⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠷⣤⣄",
@@ -20,8 +23,8 @@ struct enemy_stats getSlimeStats() {
                     "⠀⠀⠀⠙⠻⣿⣷⣦⣤⣤⣤⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣤⣤⣶⡿",
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠛⠛⠛⠛⠛⠛⠻⠿⠿⠿⠷⠶⠶⠶⠶⠶⢿⣿⣿⡿⠿⠿⠿⠿⠟⠛⠛⠛⠋"
             },
-            .hp = 20,
-            .atk = 10,
+            .hp = 25,
+            .atk = 7,
             .def = 2
     };
 
@@ -38,7 +41,9 @@ struct enemy_stats getBossStats() {
     };
 
     struct enemy_stats boss = {
+            .enemy_name = "마왕",
             .character_symbol = "◈",
+            .color = RED | WHITE,
             .ascii_art = {
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        ⢢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⡜",
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣷⣄",
@@ -72,6 +77,7 @@ struct enemy_stats getBossStats() {
             .atk = 20,
             .def = 10,
 
+            .skill_count = 1,
             .skill = { test }
     };
 

@@ -57,7 +57,7 @@ int main() {
             exit(0);
         }
 
-        if (getInput()) { // get key input
+        if (!isDisabledKeyInput() && getInput()) { // get key input
             secret_code_runner(secret, keyData.key, 10);
 
             if (canPlayerMove()) {
@@ -82,7 +82,7 @@ int main() {
         if (now_ticks == before_tick) continue;
         // write after this line
         if (intro__dead != 1) intro();
-        if (start_screen_button__dead != 1) start_screen_button();
+//        if (start_screen_button__dead != 1) start_screen_button();
         if (story__dead != 1) story();
         before_tick = now_ticks;
     }

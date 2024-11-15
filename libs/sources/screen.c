@@ -50,6 +50,7 @@ int getAvailableConsoleHeight() {
 
 #define screenBufferCount 2
 int currentScreenBufferIndex = 0;
+int reservedScreenBufferIndex[screenBufferCount] = { 0 };
 HANDLE screenBuffer[screenBufferCount] = { 0 };
 void initScreenBuffer(int cursorVisibility) {
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -78,14 +79,46 @@ int getScreenBufferCount() {
 }
 
 void switchNextScreenBuffer() {
+    if (reservedScreenBufferIndex[getNextScreenBufferIndex()] == 1) {
+        reservedScreenBufferIndex[getNextScreenBufferIndex()] = 0;
+    }
+
     currentScreenBufferIndex = getNextScreenBufferIndex();
     SetConsoleActiveScreenBuffer(screenBuffer[getCurrentScreenBufferIndex()]);
-//    printfInInformationBox(0, "[Debug] Screen buffer switched to %d", currentScreenBufferIndex);
+//  printfInInformationBox(0, "[Debug] Screen buffer switched to %d", currentScreenBufferIndex);
 }
 
 void switchScreenBuffer(int index) {
+    if (reservedScreenBufferIndex[index] == 1) {
+        reservedScreenBufferIndex[index] = 0;
+    }
+
     currentScreenBufferIndex = index;
     SetConsoleActiveScreenBuffer(screenBuffer[index]);
+}
+
+void setReservedScreenBuffer(int index, int isReserved) {
+    reservedScreenBufferIndex[index] = isReserved;
+}
+
+void setAllReservedScreenBuffer(int isReserved) {
+    for (int i = 0; i < screenBufferCount; i++) {
+        reservedScreenBufferIndex[i] = isReserved;
+    }
+}
+
+int isReservedScreenBufferByHANDLE(HANDLE screen) {
+    for (int i = 0; i < screenBufferCount; i++) {
+        if (screenBuffer[i] == screen) {
+            return reservedScreenBufferIndex[i];
+        }
+    }
+
+    return 0;
+}
+
+int isReservedScreenBufferByIndex(int index) {
+    return reservedScreenBufferIndex[index];
 }
 
 HANDLE getCurrentScreenBuffer() {
@@ -108,7 +141,35 @@ void refreshScreenBuffer() {
     SetConsoleActiveScreenBuffer(getCurrentScreenBuffer());
 }
 
-void copyScreenBuffer(int sourceIndex, int destIndex) {
+void copyScreenBufferByHANDLE(HANDLE source, HANDLE dest) {
+    // if reserved, do not copy
+    if (isReservedScreenBufferByHANDLE(dest) == 1) return;
+
+    COORD bufferSize = {(short) getConsoleSize().x, (short) getConsoleSize().y};
+    SMALL_RECT readRegion = {0, 0, bufferSize.X, bufferSize.Y};
+    COORD bufferCoord = {0, 0};
+    CHAR_INFO* charInfoBuffer = (CHAR_INFO*)malloc(sizeof(CHAR_INFO) * bufferSize.X * bufferSize.Y);
+
+    if (charInfoBuffer == NULL) {
+        // error memory allocation
+        return;
+    }
+
+    if (!ReadConsoleOutputW(source, charInfoBuffer, bufferSize, bufferCoord, &readRegion)) {
+        free(charInfoBuffer);
+        return;
+    }
+
+    if (!WriteConsoleOutputW(dest, charInfoBuffer, bufferSize, bufferCoord, &readRegion)) {
+    }
+
+    free(charInfoBuffer);
+}
+
+void copyScreenBufferByIndex(int sourceIndex, int destIndex) {
+    // if reserved, do not copy
+    if (isReservedScreenBufferByIndex(destIndex) == 1) return;
+
     COORD bufferSize = {(short) getConsoleSize().x, (short) getConsoleSize().y};
     SMALL_RECT readRegion = {0, 0, bufferSize.X, bufferSize.Y};
     COORD bufferCoord = {0, 0};
@@ -130,13 +191,30 @@ void copyScreenBuffer(int sourceIndex, int destIndex) {
     free(charInfoBuffer);
 }
 
-void clearScreenBuffer(int index) {
+void clearScreenBufferByHANDLE(HANDLE screen) {
+    // if reserved, do not clear
+    if (isReservedScreenBufferByHANDLE(screen) == 1) return;
+
+    COORD coord = {0, 0};
+    DWORD written;
+    FillConsoleOutputCharacterW(screen, ' ', (getConsoleSize().x + 1) * (getAvailableConsoleHeight() + 1), coord,
+                                 &written);
+    FillConsoleOutputAttribute(screen, 0, (getConsoleSize().x + 1) * (getAvailableConsoleHeight() + 1), coord,
+                               &written);
+
+    printInformationBoxLine(screen);
+}
+
+void clearScreenBufferByIndex(int index) {
+    // if reserved, do not clear
+    if (isReservedScreenBufferByIndex(index) == 1) return;
+
     COORD coord = {0, 0};
     DWORD written;
     FillConsoleOutputCharacterW(screenBuffer[index], ' ', (getConsoleSize().x + 1) *
-                                            (getAvailableConsoleHeight() + 1), coord, &written);
+                                                          (getAvailableConsoleHeight() + 1), coord, &written);
     FillConsoleOutputAttribute(screenBuffer[index], 0, (getConsoleSize().x + 1) *
-                                          (getAvailableConsoleHeight() + 1), coord, &written);
+                                                       (getAvailableConsoleHeight() + 1), coord, &written);
 
     printInformationBoxLine(screenBuffer[index]);
 }

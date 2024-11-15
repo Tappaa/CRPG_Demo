@@ -1,14 +1,30 @@
 #pragma once
 #include <stdio.h>
 
+enum TYPE {
+    HORIZONTAL = 1,
+    VERTICAL = 2,
+    MATRIX = 3
+};
+
 void printfCenter(HANDLE screen, int y, char* str, ...);
 void printfXY(HANDLE screen, int x, int y, char* str, ...);
 void printf_Buffer(HANDLE screen, char* str, ...);
 void clearConsoleLines(HANDLE screen, int start_y, int end_y);
-void printfInInformationBox(int level, char *str, ...); // level : 0 : 하얀색 1 : 파란색 3 : 노란색 4 : 빨간색
+void clearConsoleArea(HANDLE screen, struct Point start, struct Point end);
+void printfInInformationBox(int level, char *str, ...); // level : 0 : 하얀색 1 : 파란색 2 : 노란색 3 : 빨간색
+void refreshInformationBox(); // If the text looks overlapping, use this function.
 
 // extra functions
 
 void printContinueAction(int y);
+extern int selectedIndex;
+/// This creates a button in the middle between startPos and endPos. </br>
+/// type -> 1 : horizontal 2 : vertical 3 : matrix </br>
+/// gap -> gap between strings </br>
+/// count -> count of str </br></br>
+/// return -> 1 (-1 if reserved screen buffer or error)
+/// selectedIndex -> selected index
+int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count);
 void printInformationBoxLine(HANDLE screen);
 void printEdgeLines(HANDLE screen, struct Point pos1, struct Point pos2);

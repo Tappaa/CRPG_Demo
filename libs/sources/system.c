@@ -5,14 +5,35 @@ struct Point getPrintCenter(char *str, ...) {
     struct Point size = getConsoleSize();
     va_list args;
     va_start(args, str);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
 
-    char buffer[buffer_size];
-    vsnprintf(buffer, sizeof(buffer), str, args);
-    int len = (int) utf8Strlen(buffer);
-
-    int x = (size.x - len) / 2;
-    struct Point result = { x, 0 };
+    vsnprintf(buffer, bufferSize, str, args);
     va_end(args);
+
+    int len = (int) utf8Strlen(buffer);
+    int x = (size.x - len) / 2 + 1;
+    struct Point result = { x, 0 };
+    free(buffer);
+
+    return result;
+}
+
+struct Point getPrintCenterByPos(struct Point startPos, struct Point endPos, char *str, ...) {
+    va_list args;
+    va_start(args, str);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
+
+    vsnprintf(buffer, bufferSize, str, args);
+    va_end(args);
+
+    int len = (int) utf8Strlen(buffer);
+    int x = (startPos.x + endPos.x - len) / 2 + 1;
+    int y = (startPos.y + endPos.y) / 2;
+    struct Point result = { x, y };
+    free(buffer);
+
     return result;
 }
 
@@ -55,6 +76,19 @@ int charCheck (unsigned char c) {
     else if ((c & 0xF0) == 0xE0) return 3; // 3-byte sequence
     else if ((c & 0xF8) == 0xF0) return 4; // 4-byte sequence
     return -1; // Invalid UTF-8 byte
+}
+
+int arrayUtf8Strlen(char *str[]) {
+    int size = 0;
+    while (str[size] != NULL) {
+        size++;
+    }
+
+    int total_length = 0;
+    for (int i = 0; i < size; i++) {
+        total_length += (int) utf8Strlen(str[i]);
+    }
+    return total_length;
 }
 
 void setRandomSeed(unsigned int seed) {
