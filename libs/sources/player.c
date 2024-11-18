@@ -9,6 +9,12 @@ int player_dead = 0;
 int player_fight = 0;
 int player_move = 0;
 
+int player_hp = 0;
+int player_mp = 0;
+
+int enemy_hp = 0;
+int enemy_mp = 0;
+
 int *foughtSlimes = NULL;
 int *foughtBosses = NULL;
 
@@ -80,7 +86,7 @@ void skillStatusUpdate(int index) {
     setColor(getCurrentScreenBuffer(), GRAY, GREEN);
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "회복량 : %d", player.skill[index].skill_heal);
     setColor(getCurrentScreenBuffer(), GRAY, BLACK);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", player.skill[index].skill_mp_cost > player.max_mp ? "불가능" : "가능");
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", player.skill[index].skill_mp_cost > player_mp ? "불가능" : "가능");
 }
 
 void initPlayer() {
@@ -188,11 +194,11 @@ int fightEnemy(struct enemy_stats enemy) {
     }
     resetColor(getCurrentScreenBuffer());
 
-    int player_hp = player.max_hp;
-    int player_mp = player.max_mp;
+    player_hp = player.max_hp;
+    player_mp = player.max_mp;
 
-    int enemy_hp = enemy.hp;
-    int enemy_mp = enemy.mp;
+    enemy_hp = enemy.hp;
+    enemy_mp = enemy.mp;
 
     int turn = rand() % 2; // 0: player turn, 1: enemy turn
 
@@ -372,7 +378,6 @@ int fightEnemy(struct enemy_stats enemy) {
             skipAbleSleep(1000);
             levelUp();
             skipAbleSleep(1000);
-            player_fight = 0;
             switchNextScreenBuffer();
             refreshInformationBox();
 
