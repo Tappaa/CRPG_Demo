@@ -1,6 +1,6 @@
 #include "../manager.h"
 
- struct Point player_pos = { 0, 0 };
+struct Point player_pos = { 0, 0 };
 struct Point temp_pos = { 0, 0 };
 int player_map = 0;
 struct player_stats player = { };
@@ -21,7 +21,7 @@ int *foughtBosses = NULL;
 void playerStatusUpdate(int hp, int mp) {
     struct Point s = {
             .x = 50,
-            .y = 32
+            .y = 30
     };
 
     struct Point e = {
@@ -31,10 +31,12 @@ void playerStatusUpdate(int hp, int mp) {
 
     clearConsoleArea(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
 
-    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 34 }, (struct Point) { e.x, 34 }, "체력 : ■■■■■■■■■■");
-    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "마나 : ■■■■■■■■■■");
-    struct Point ATK = getPrintCenterByPos((struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "공격력 : %d", player.atk);
-    struct Point DEF = getPrintCenterByPos((struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "방어력 : %d", player.def);
+    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 32 }, (struct Point) { e.x, 32 }, "체력 : ■■■■■■■■■■");
+    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 33 }, (struct Point) { e.x, 33 }, "마나 : ■■■■■■■■■■");
+    struct Point ATK = getPrintCenterByPos((struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "공격력 : %d", player.atk);
+    struct Point DEF = getPrintCenterByPos((struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "방어력 : %d", player.def);
+    struct Point CRIT = getPrintCenterByPos((struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "크리티컬 확률 : %d%%", player.critical_chance);
+    struct Point LV = getPrintCenterByPos((struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "레벨 : %d", player.level);
 
     int hp_bar = (int) ((double) hp / player.max_hp * 10);
     int mp_bar = (int) ((double) mp / player.max_mp * 10);
@@ -43,6 +45,8 @@ void playerStatusUpdate(int hp, int mp) {
     MP = printfXY(getCurrentScreenBuffer(), MP.x, MP.y, "마나 : ");
     printfXY(getCurrentScreenBuffer(), ATK.x, ATK.y, "공격력 : %d", player.atk);
     printfXY(getCurrentScreenBuffer(), DEF.x, DEF.y, "방어력 : %d", player.def);
+    printfXY(getCurrentScreenBuffer(), CRIT.x, CRIT.y, "크리티컬 확률 : %d%%", player.critical_chance);
+    printfXY(getCurrentScreenBuffer(), LV.x, LV.y, "레벨 : %d", player.level);
 
     setColor(getCurrentScreenBuffer(), BLACK, RED);
     for (int i = 0; i < hp_bar; i++) {
@@ -67,7 +71,7 @@ void playerStatusUpdate(int hp, int mp) {
 void skillStatusUpdate(int index) {
     struct Point s = {
             .x = 50,
-            .y = 32
+            .y = 30
     };
 
     struct Point e = {
@@ -78,21 +82,23 @@ void skillStatusUpdate(int index) {
     clearConsoleArea(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
 
     setColor(getCurrentScreenBuffer(), GRAY, BLACK);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 34 }, (struct Point) { e.x, 34 }, "스킬 : %s", player.skill[index].skill_name);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 32 }, (struct Point) { e.x, 33 }, "스킬 : %s", player.skill[index].skill_name);
     setColor(getCurrentScreenBuffer(), GRAY, RED);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "공격력 : %d", player.skill[index].skill_damage);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 34 }, (struct Point) { e.x, 34 }, "공격력 : %d", player.skill[index].skill_damage);
     setColor(getCurrentScreenBuffer(), GRAY, BLUE);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "마나 소모 : %d", player.skill[index].skill_mp_cost);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "마나 소모 : %d", player.skill[index].skill_mp_cost);
     setColor(getCurrentScreenBuffer(), GRAY, GREEN);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "회복량 : %d", player.skill[index].skill_heal);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "회복량 : %d", player.skill[index].skill_heal);
+    setColor(getCurrentScreenBuffer(), GRAY, darkGreen);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "사용 가능 레벨 : %d", player.skill[index].minimum_level);
     setColor(getCurrentScreenBuffer(), GRAY, BLACK);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", (player.skill[index].skill_mp_cost > player_mp) && (player.skill[index].minimum_level > player.level) ? "불가능" : "가능");
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", (player.skill[index].minimum_level <= player.level) && (player.skill[index].skill_mp_cost <= player_mp) ? "가능" : "불가능");
 }
 
 void initPlayer() {
     strcpy(player.character_symbol, "웃");
-    player.max_hp = 30;
-    player.hp_plus_per_level = 15; // max hp = 30 + 15 * 6 = 125
+    player.max_hp = 35;
+    player.hp_plus_per_level = 15; // max hp = 30 + 15 * 6 = 130
 
     player.max_mp = 30;
     player.mp_plus_per_level = 5; // max mp = 30 + 5 * 6 = 60
@@ -122,8 +128,8 @@ void initPlayer() {
             .skill_name = "단결된 의지",
             .skill_damage = 0,
             .skill_mp_cost = 10,
-            .skill_heal = 15,
-            .minimum_level = 1
+            .skill_heal = 25,
+            .minimum_level = 3
     };
 
     player.skill_count = 2;
@@ -192,7 +198,7 @@ int fightEnemy(struct enemy_stats enemy) {
     struct Point center = getPrintCenter(enemy.ascii_art[0]);
     setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
     for (int i = 0; i < 20; i++) { // 20: ascii art length
-        printfXY(getCurrentScreenBuffer(), center.x, i + 7, enemy.ascii_art[i]);
+        printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
     }
     resetColor(getCurrentScreenBuffer());
 
@@ -210,10 +216,10 @@ int fightEnemy(struct enemy_stats enemy) {
         printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
 
         for (int i = 1; i < getConsoleSize().x - 1; i++) {
-            printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 7, "─");
+            printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
         }
 
-        for (int i = 33; i < 40; i++) {
+        for (int i = 31; i < 40; i++) {
             printfXY(getCurrentScreenBuffer(), 50, i, "│");
         }
 
@@ -223,7 +229,7 @@ int fightEnemy(struct enemy_stats enemy) {
 
             returnAttackSelectP:
             if (printSelectAction(HORIZONTAL,
-                                  (struct Point) { 0, 33 },
+                                  (struct Point) { 0, 31 },
                                   (struct Point) { 50, 40 },
                                   9,
                                   (char *[]) {"공격", "스킬", NULL},
@@ -242,9 +248,9 @@ int fightEnemy(struct enemy_stats enemy) {
                         break;
                     case 1:
                         if (printSelectAction(HORIZONTAL,
-                                              (struct Point) { 0, 33 },
+                                              (struct Point) { 0, 31 },
                                               (struct Point) { 50, 40 },
-                                                      7,
+                                              7,
                                               (char *[]) { player.skill[0].skill_name, player.skill[1].skill_name, NULL },
                                               2, TRUE, skillStatusUpdate)) {
                             switch (selectedIndex) {
@@ -293,13 +299,13 @@ int fightEnemy(struct enemy_stats enemy) {
                     // GUI effect
                     setColor(getCurrentScreenBuffer(), BLACK, RED);
                     for (int i = 0; i < 20; i++) {
-                        printfXY(getCurrentScreenBuffer(), center.x, i + 7, enemy.ascii_art[i]);
+                        printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
                     }
                     resetColor(getCurrentScreenBuffer());
                     skipAbleSleep(250);
                     setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
                     for (int i = 0; i < 20; i++) {
-                        printfXY(getCurrentScreenBuffer(), center.x, i + 7, enemy.ascii_art[i]);
+                        printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
                     }
                     resetColor(getCurrentScreenBuffer());
                     // GUI effect
@@ -356,10 +362,10 @@ int fightEnemy(struct enemy_stats enemy) {
                 printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
 
                 for (int i = 1; i < getConsoleSize().x - 1; i++) {
-                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 7, "─");
+                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
                 }
 
-                for (int i = 33; i < 40; i++) {
+                for (int i = 31; i < 40; i++) {
                     printfXY(getCurrentScreenBuffer(), 50, i, "│");
                 }
                 resetColor(getCurrentScreenBuffer());
@@ -367,10 +373,10 @@ int fightEnemy(struct enemy_stats enemy) {
                 printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
 
                 for (int i = 1; i < getConsoleSize().x - 1; i++) {
-                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 7, "─");
+                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
                 }
 
-                for (int i = 33; i < 40; i++) {
+                for (int i = 31; i < 40; i++) {
                     printfXY(getCurrentScreenBuffer(), 50, i, "│");
                 }
                 // GUI effect
