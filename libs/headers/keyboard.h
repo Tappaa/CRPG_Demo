@@ -20,4 +20,4 @@ struct Key {
 
 extern struct Key keyData;
 
-int getInput(); // 1: executed, 0: not executed
+int getInput(int bypass); // 1: executed, 0: not executed | bypass: 1: bypass, 0: not bypass

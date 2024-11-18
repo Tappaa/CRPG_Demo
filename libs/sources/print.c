@@ -249,7 +249,7 @@ void printContinueAction(int y) {
             animation = 0;
         }
 
-        if (getInput()) {
+        if (getInput(1)) {
             refreshScreenBuffer();
 //                CloseHandle(buffer);
             break;
@@ -271,7 +271,7 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
     while (1) {
         if (delay > 0) delay--;
 
-        if (delay == 0 && getInput()) { // select
+        if (delay == 0 && getInput(1)) { // select
             if (type == 1) { // horizontal
                 if (keyData.key == KEY_LEFT && keyData.isPressed) {
                     selectedIndex--;

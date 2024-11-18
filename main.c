@@ -5,12 +5,10 @@ struct Point con_size;
 // extern
 extern int cheat_mode;
 extern int intro__dead;
-extern int start_screen_button__dead;
 extern int story__dead;
 
 extern void secret_code_runner(int* pass, int enter, int size);
 extern void intro();
-extern void start_screen_button();
 extern void story();
 // extern
 
@@ -45,6 +43,7 @@ int main() {
 
     // do not change console size
     printfInInformationBox(3, "[경고] 콘솔창 크기를 변경하지 마세요. (변경시 프로그램이 종료됩니다)");
+    printfInInformationBox(0, "[!] 'ENTER' 키를 누르면 대화를 넘길 수 있습니다.");
 
     int secret[10] = { 0 }; // secret code buffer
     unsigned long long before_tick = 0; // duplicate check
@@ -57,7 +56,7 @@ int main() {
             exit(0);
         }
 
-        if (!isDisabledKeyInput() && getInput()) { // get key input
+        if (getInput(0)) { // get key input
             secret_code_runner(secret, keyData.key, 10);
 
             if (canPlayerMove()) {
@@ -82,7 +81,6 @@ int main() {
         if (now_ticks == before_tick) continue;
         // write after this line
         if (intro__dead != 1) intro();
-//        if (start_screen_button__dead != 1) start_screen_button();
         if (story__dead != 1) story();
         before_tick = now_ticks;
     }

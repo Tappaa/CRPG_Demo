@@ -35,9 +35,7 @@ struct enemy_stats getBossStats() {
     struct skills test = {
         .skill_name = "테스트 스킬",
         .skill_mp_cost = 10,
-        .skill_damage = 20,
-        .skill_critical_chance = 10,
-        .skill_critical_damage_multiplier = 2
+        .skill_damage = 20
     };
 
     struct enemy_stats boss = {

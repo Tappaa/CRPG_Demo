@@ -62,15 +62,15 @@ void levelUp() {
     }
 
     printfInInformationBox(1, "[!] '플레이어'가 레벨업을 했습니다! 현재 레벨: %d", player.level);
-    Sleep(1500);
+    skipAbleSleep(1500);
     printfInInformationBox(1, "[+] 체력이 %d만큼 증가했습니다. [체력: %d -> %d]", player.hp_plus_per_level, player.max_hp, player.max_hp + player.hp_plus_per_level);
-    Sleep(1500);
+    skipAbleSleep(1500);
     printfInInformationBox(1, "[+] 마나가 %d만큼 증가했습니다. [마나: %d -> %d]", player.mp_plus_per_level, player.max_mp, player.max_mp + player.mp_plus_per_level);
-    Sleep(1500);
+    skipAbleSleep(1500);
     printfInInformationBox(1, "[+] 공격력이 %d만큼 증가했습니다. [공격력: %d -> %d]", player.atk_plus_per_level, player.atk, player.atk + player.atk_plus_per_level);
-    Sleep(1500);
+    skipAbleSleep(1500);
     printfInInformationBox(1, "[+] 방어력이 %d만큼 증가했습니다. [방어력: %d -> %d]", player.def_plus_per_level, player.def, player.def + player.def_plus_per_level);
-    Sleep(1500);
+    skipAbleSleep(1500);
     printfInInformationBox(1, "[+] 크리티컬 확률이 %d만큼 증가했습니다. [크리티컬 확률: %d -> %d]", player.critical_plus_per_level, player.critical_chance, player.critical_chance + player.critical_plus_per_level);
 
     player.max_hp += player.hp_plus_per_level;
@@ -84,14 +84,14 @@ void levelUp() {
 }
 
 void fightEnemy(struct enemy_stats enemy) {
-    Sleep(1000);
+    skipAbleSleep(1000);
     setPlayerMove(0);
     player_fight = 1;
     setReservedScreenBuffer(getCurrentScreenBufferIndex(), TRUE);
     clearScreenBufferByIndex(getNextScreenBufferIndex());
     switchNextScreenBuffer();
 
-    Sleep(1000);
+    skipAbleSleep(1000);
     struct Point center = getPrintCenter(enemy.ascii_art[0]);
     setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
     for (int i = 0; i < asciiArtLength(enemy); i++) {
@@ -130,18 +130,18 @@ void fightEnemy(struct enemy_stats enemy) {
                 switch (selectedIndex) {
                     case 0:
                         printfInInformationBox(0, "[!] '플레이어'가 '%s'을(를) 공격합니다.", enemy.enemy_name);
-                        Sleep(1000);
+                        skipAbleSleep(1000);
                         damage = player.atk - enemy.def;
 
                         if (criticalCheck()) {
                             damage *= player.critical_damage_multiplier;
                             printfInInformationBox(3, "[!] '크리티컬 히트!'");
-                            Sleep(1000);
+                            skipAbleSleep(1000);
                         }
                         break;
                     case 1:
                         printfInInformationBox(1, "[!] '플레이어'가 '스킬'을 사용했습니다.");
-                        Sleep(1000);
+                        skipAbleSleep(1000);
                         // TODO: Add skill
                         break;
                     default:
@@ -154,7 +154,7 @@ void fightEnemy(struct enemy_stats enemy) {
                     printfXY(getCurrentScreenBuffer(), center.x, i + 7, enemy.ascii_art[i]);
                 }
                 resetColor(getCurrentScreenBuffer());
-                Sleep(250);
+                skipAbleSleep(250);
                 setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
                 for (int i = 0; i < asciiArtLength(enemy); i++) {
                     printfXY(getCurrentScreenBuffer(), center.x, i + 7, enemy.ascii_art[i]);
@@ -165,12 +165,12 @@ void fightEnemy(struct enemy_stats enemy) {
                 if (damage < 0) damage = 0;
                 enemy_hp -= damage;
                 printfInInformationBox(2, "[!] '%s'에게 %d의 피해를 입혔습니다. ['%s'의 남은 체력 : %d]", enemy.enemy_name, damage, enemy.enemy_name, enemy_hp);
-                Sleep(2000);
+                skipAbleSleep(2000);
                 turn = (turn + 1) % 2;
             }
         } else {
             printfInInformationBox(0, "[!] '%s'의 턴입니다.", enemy.enemy_name);
-            Sleep(2000);
+            skipAbleSleep(2000);
             if (enemy.skill_count != 0) {
                 if (rand() % 5 == 0) {
                     renewSkill:
@@ -183,21 +183,21 @@ void fightEnemy(struct enemy_stats enemy) {
                         damage = enemy.skill[randomSkills].skill_damage;
                         printfInInformationBox(1, "[!] '%s'이(가) '%s'을(를) 사용했습니다.", enemy.enemy_name,
                                                enemy.skill[randomSkills].skill_name);
-                        Sleep(1000);
+                        skipAbleSleep(1000);
                         goto attackEnemy;
                     }
                 }
             }
 
             printfInInformationBox(1, "[!] '%s'이(가) '플레이어'를 공격합니다.", enemy.enemy_name);
-            Sleep(1000);
+            skipAbleSleep(1000);
             damage = enemy.atk - player.def;
             if (damage < 0) damage = 0;
 
             if (criticalCheckEnemy(enemy)) {
                 damage *= enemy.critical_damage_multiplier;
                 printfInInformationBox(3, "[!] '크리티컬 히트!'");
-                Sleep(1000);
+                skipAbleSleep(1000);
             }
 
             attackEnemy:
@@ -213,7 +213,7 @@ void fightEnemy(struct enemy_stats enemy) {
                 printfXY(getCurrentScreenBuffer(), 50, i, "│");
             }
             resetColor(getCurrentScreenBuffer());
-            Sleep(250);
+            skipAbleSleep(250);
             printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
 
             for (int i = 1; i < getConsoleSize().x - 1; i++) {
@@ -227,15 +227,15 @@ void fightEnemy(struct enemy_stats enemy) {
 
             player_hp -= damage;
             printfInInformationBox(2, "[!] '플레이어'에게 %d의 피해를 입혔습니다. ['플레이어'의 남은 체력: %d]", damage, player_hp);
-            Sleep(2000);
+            skipAbleSleep(2000);
             turn = (turn + 1) % 2;
         }
 
         if (enemy_hp <= 0) {
             printfInInformationBox(3, "[!] '%s'을 물리쳤습니다.", enemy.enemy_name);
-            Sleep(1000);
+            skipAbleSleep(1000);
             levelUp();
-            Sleep(1000);
+            skipAbleSleep(1000);
             player_fight = 0;
             switchNextScreenBuffer();
             refreshInformationBox();
@@ -261,13 +261,13 @@ void playerDead(char* reason) {
     player_dead = 1;
     printfInInformationBox(3, "[!] '플레이어'가 사망했습니다. 사망 원인: %s", reason);
 
-    Sleep(1000);
+    skipAbleSleep(1000);
     clearScreenBufferByIndex(getCurrentScreenBufferIndex());
     refreshScreenBuffer();
 
     printContinueAction(31);
     printfInInformationBox(1, "게임을 종료합니다.");
-    Sleep(1000);
+    skipAbleSleep(1000);
 
     free(foughtSlimes);
     free(foughtBosses);
@@ -276,15 +276,15 @@ void playerDead(char* reason) {
 
 void gameClear() {
     printfInInformationBox(3, "[!] 게임을 클리어했습니다. 축하합니다!");
-    Sleep(1000);
+    skipAbleSleep(1000);
     clearScreenBufferByIndex(getNextScreenBufferIndex());
     printfCenter(getNextScreenBuffer(), 13, "대충 스토리");
     switchNextScreenBuffer();
-    Sleep(1000);
+    skipAbleSleep(1000);
 
     printContinueAction(31);
     printfInInformationBox(1, "게임을 종료합니다.");
-    Sleep(1000);
+    skipAbleSleep(1000);
 
     free(foughtSlimes);
     free(foughtBosses);

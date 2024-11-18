@@ -94,3 +94,18 @@ int arrayUtf8Strlen(char *str[]) {
 void setRandomSeed(unsigned int seed) {
     srand(seed);
 }
+
+void skipAbleSleep(DWORD milliSeconds) {
+    unsigned __int64 start = GetTickCount64();
+    unsigned __int64 now = 0;
+    while (now < milliSeconds) {
+        now = GetTickCount64() - start;
+        if (getInput(1)) {
+            if (keyData.key == KEY_ENTER) {
+                break;
+            }
+        }
+
+//        printfInInformationBox(0, "[Debug] Sleep: %d", now);
+    }
+}

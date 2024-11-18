@@ -13,3 +13,5 @@ int charCheck (unsigned char c);
 int arrayUtf8Strlen(char *str[]);
 
 void setRandomSeed(unsigned int seed);
+
+void skipAbleSleep(DWORD milliSeconds);
