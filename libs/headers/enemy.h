@@ -5,6 +5,7 @@ struct skills {
     int skill_mp_cost;
     int skill_damage;
     int skill_heal;
+    int minimum_level;
 };
 
 struct enemy_stats {

@@ -86,24 +86,10 @@ void skillStatusUpdate(int index) {
     setColor(getCurrentScreenBuffer(), GRAY, GREEN);
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "회복량 : %d", player.skill[index].skill_heal);
     setColor(getCurrentScreenBuffer(), GRAY, BLACK);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", player.skill[index].skill_mp_cost > player_mp ? "불가능" : "가능");
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "사용 가능 여부 : %s", (player.skill[index].skill_mp_cost > player_mp) && (player.skill[index].minimum_level > player.level) ? "불가능" : "가능");
 }
 
 void initPlayer() {
-    struct skills skill1 = {
-            .skill_name = "성스러운 칼",
-            .skill_damage = 30,
-            .skill_mp_cost = 40,
-            .skill_heal = 0
-    };
-
-    struct skills skill2 = {
-            .skill_name = "단결된 의지",
-            .skill_damage = 0,
-            .skill_mp_cost = 10,
-            .skill_heal = 15
-    };
-
     strcpy(player.character_symbol, "웃");
     player.max_hp = 30;
     player.hp_plus_per_level = 15; // max hp = 30 + 15 * 6 = 125
@@ -123,6 +109,22 @@ void initPlayer() {
     player.critical_chance = 5;
     player.critical_plus_per_level = 1; // max critical chance = 5 + 1 * 5 = 10
     player.critical_damage_multiplier = 2;
+
+    struct skills skill1 = {
+            .skill_name = "성스러운 칼",
+            .skill_damage = 30,
+            .skill_mp_cost = 40,
+            .skill_heal = 0,
+            .minimum_level = player.max_level
+    };
+
+    struct skills skill2 = {
+            .skill_name = "단결된 의지",
+            .skill_damage = 0,
+            .skill_mp_cost = 10,
+            .skill_heal = 15,
+            .minimum_level = 1
+    };
 
     player.skill_count = 2;
     player.skill[0] = skill1;
@@ -250,6 +252,13 @@ int fightEnemy(struct enemy_stats enemy) {
                                 case 1:
                                     if (player.skill[selectedIndex].skill_mp_cost > player_mp) {
                                         printfInInformationBox(3, "[!] 마나가 부족합니다.");
+                                        skipAbleSleep(1000);
+                                        playerStatusUpdate(player_hp, player_mp);
+                                        goto returnAttackSelectP;
+                                    }
+
+                                    if (player.skill[selectedIndex].minimum_level > player.level) {
+                                        printfInInformationBox(3, "[!] 레벨이 부족합니다.");
                                         skipAbleSleep(1000);
                                         playerStatusUpdate(player_hp, player_mp);
                                         goto returnAttackSelectP;
