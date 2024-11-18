@@ -43,7 +43,7 @@ int main() {
 
     // do not change console size
     printfInInformationBox(3, "[경고] 콘솔창 크기를 변경하지 마세요. (변경시 프로그램이 종료됩니다)");
-    printfInInformationBox(0, "[!] 'ENTER' 키를 누르면 대화를 넘길 수 있습니다.");
+    printfInInformationBox(0, "[!] 'ENTER' 키를 누르면 이벤트를 넘길 수 있습니다.");
 
     int secret[10] = { 0 }; // secret code buffer
     unsigned long long before_tick = 0; // duplicate check

@@ -9,7 +9,7 @@ int getInput(int bypass) {
 
     int result = 0;
 
-    if (!bypass && isDisabledKeyInput() == 0) {
+    if (!bypass && isDisabledKeyInput()) {
         return result;
     }
 
