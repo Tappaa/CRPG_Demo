@@ -86,7 +86,7 @@ struct enemy_stats getBossStats() {
 int asciiArtLength(struct enemy_stats enemy) {
     int length = 0;
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 30; i++) {
         if (strcmp(enemy.ascii_art[i], "") == 0) {
             break;
         }

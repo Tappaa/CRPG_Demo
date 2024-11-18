@@ -22,9 +22,31 @@ void printfCenter(HANDLE screen, int y, char* str, ...) {
     free(buffer);
 }
 
-void printfXY(HANDLE screen, int x, int y, char* str, ...) {
+void printfAreaCenter(HANDLE screen, struct Point start, struct Point end, char* str, ...) {
     // check if screen is reserved
     if (isReservedScreenBufferByHANDLE(screen)) return;
+
+    va_list args;
+    va_start(args, str);
+    int bufferSize = vsnprintf(NULL, 0, str, args) + 1;
+    char *buffer = (char *) malloc(bufferSize);
+
+    vsnprintf(buffer, bufferSize, str, args);
+    va_end(args);
+
+    int len = (int) utf8Strlen(buffer);
+    int x = start.x + (end.x - start.x - len) / 2;
+    int y = start.y + (end.y - start.y) / 2;
+    gotoXY(screen, x, y);
+
+    WriteFile(screen, buffer, (DWORD) strlen(buffer), NULL, NULL);
+    refreshScreenBuffer();
+    free(buffer);
+}
+
+struct Point printfXY(HANDLE screen, int x, int y, char* str, ...) {
+    // check if screen is reserved
+    if (isReservedScreenBufferByHANDLE(screen)) return (struct Point) { -1, -1 };
 
     gotoXY(screen, x, y);
     va_list args;
@@ -38,6 +60,8 @@ void printfXY(HANDLE screen, int x, int y, char* str, ...) {
     WriteFile(screen, buffer, (DWORD) strlen(buffer), NULL, NULL);
     refreshScreenBuffer();
     free(buffer);
+
+    return getCursorPos(screen);
 }
 
 void printf_Buffer(HANDLE screen, char* str, ...) {
@@ -259,7 +283,7 @@ void printContinueAction(int y) {
 }
 
 int selectedIndex = 0;
-int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape) {
+int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape, void (*update)(int)) {
     // check if screen is reserved
     if (isReservedScreenBufferByHANDLE(getCurrentScreenBuffer())) return -1;
 
@@ -271,6 +295,7 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
     int delay = 0;
     int delay_ticks = 500;
 
+    int isStay = 0;
     selectedIndex = 0;
 
     struct Point clearPosStart;
@@ -282,10 +307,12 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
         if (delay == 0 && getInput(1)) { // select
             if (type == 1) { // horizontal
                 if (keyData.key == KEY_LEFT && keyData.isPressed) {
+                    isStay = 0;
                     selectedIndex--;
                     if (selectedIndex < 0) selectedIndex = count - 1;
                     delay = delay_ticks;
                 } else if (keyData.key == KEY_RIGHT && keyData.isPressed) {
+                    isStay = 0;
                     selectedIndex++;
                     if (selectedIndex >= count) selectedIndex = 0;
                     delay = delay_ticks;
@@ -300,10 +327,12 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
                 }
             } else if (type == 2) { // vertical
                 if (keyData.key == KEY_UP && keyData.isPressed) {
+                    isStay = 0;
                     selectedIndex--;
                     if (selectedIndex < 0) selectedIndex = count - 1;
                     delay = delay_ticks;
                 } else if (keyData.key == KEY_DOWN && keyData.isPressed) {
+                    isStay = 0;
                     selectedIndex++;
                     if (selectedIndex >= count) selectedIndex = 0;
                     delay = delay_ticks;
@@ -367,6 +396,10 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
                 }
                 printfXY(getCurrentScreenBuffer(), printPos.x, printPos.y, str[i]);
             }
+        }
+        if (!isStay) {
+            isStay = 1;
+            if (update != NULL) update(selectedIndex);
         }
     }
 }

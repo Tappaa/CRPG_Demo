@@ -33,7 +33,7 @@ void setDisabledKeyInput(int isDisabled);
 /* basic console functions */
 void gotoXY(HANDLE screen, int x, int y);
 struct Point getConsoleSize();
-struct Point getCursorPos();
+struct Point getCursorPos(HANDLE screen);
 void setColor(HANDLE screen, int backgroundColor, int textColor);
 void resetColor(HANDLE screen);
 int getAvailableConsoleHeight();

@@ -26,9 +26,9 @@ struct Point getConsoleSize() {
     return result;
 }
 
-struct Point getCursorPos() {
+struct Point getCursorPos(HANDLE screen) {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(getCurrentScreenBuffer(), &csbi);
+    GetConsoleScreenBufferInfo(screen, &csbi);
     struct Point result = { csbi.dwCursorPosition.X, csbi.dwCursorPosition.Y };
     return result;
 }

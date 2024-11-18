@@ -8,7 +8,8 @@ enum TYPE {
 };
 
 void printfCenter(HANDLE screen, int y, char* str, ...);
-void printfXY(HANDLE screen, int x, int y, char* str, ...);
+void printfAreaCenter(HANDLE screen, struct Point start, struct Point end, char* str, ...);
+struct Point printfXY(HANDLE screen, int x, int y, char* str, ...); // return : position of the end of the string
 void printf_Buffer(HANDLE screen, char* str, ...);
 void clearConsoleLines(HANDLE screen, int start_y, int end_y);
 void clearConsoleArea(HANDLE screen, struct Point start, struct Point end);
@@ -26,6 +27,6 @@ extern int selectedIndex;
 /// count -> count of str </br></br>
 /// return -> 1 (-1 if reserved screen buffer or error)
 /// selectedIndex -> selected index ( -1 if escape key pressed )
-int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape);
+int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape, void (*update)(int));
 void printInformationBoxLine(HANDLE screen);
 void printEdgeLines(HANDLE screen, struct Point pos1, struct Point pos2);
