@@ -33,7 +33,7 @@ extern int *foughtBosses;
 void initPlayer(); // initialize player stats
 void createPlayer(int mapNum, struct Point pos); // create player
 void levelUp(); // level up player
-void fightEnemy(struct enemy_stats enemy); // fight enemy
+int fightEnemy(struct enemy_stats enemy); // fight enemy (return 1 if player win, 0 if not)
 void playerDead(char* reason); // player dead event
 void gameClear(); // game clear event
 int movePlayer(int direction); // move player to direction(0: up, 1: right, 2: down, 3: left). return 1 if player moved, 0 if not

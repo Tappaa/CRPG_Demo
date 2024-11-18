@@ -19,12 +19,13 @@ void refreshInformationBox(); // If the text looks overlapping, use this functio
 
 void printContinueAction(int y);
 extern int selectedIndex;
+/// @Note : If the size of the char *str[] array is larger than the input value, add NULL to the end of the array.
 /// This creates a button in the middle between startPos and endPos. </br>
 /// type -> 1 : horizontal 2 : vertical 3 : matrix </br>
 /// gap -> gap between strings </br>
 /// count -> count of str </br></br>
 /// return -> 1 (-1 if reserved screen buffer or error)
-/// selectedIndex -> selected index
-int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count);
+/// selectedIndex -> selected index ( -1 if escape key pressed )
+int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape);
 void printInformationBoxLine(HANDLE screen);
 void printEdgeLines(HANDLE screen, struct Point pos1, struct Point pos2);

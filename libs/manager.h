@@ -8,6 +8,6 @@
 
 #include "headers/obstacle.h"
 
-#define game_version "0.1.3"
+#define game_version "0.1.4"
 
 // TODO: Add fight system

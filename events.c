@@ -32,14 +32,14 @@ void secret_code_runner(int* pass, int enter, int size) {
 
 int intro__dead = 0;
 void intro() {
-//    intro__dead = 1;
-//
-//    initPlayer();
-//    createPlayer(0, getPlayerStartLocation(0));
-//
-//    switchNextScreenBuffer();
-//
-//    return; //  : skip intro
+    intro__dead = 1;
+
+    initPlayer();
+    createPlayer(0, getPlayerStartLocation(0));
+
+    switchNextScreenBuffer();
+
+    return; //  : skip intro
     switch (now_ticks) {
         case 1000:
             printfXY(getCurrentScreenBuffer(), 0, 0, "Welcome to C-RPG");
@@ -100,7 +100,7 @@ void intro() {
                                       end,
                                       0,
                                       (char *[]) { "게임 시작", "게임 종료" },
-                                      2)) {
+                                      2, FALSE)) {
                     switch (selectedIndex) {
                         case 0:
                             printfInInformationBox(1, "게임을 시작합니다.");
@@ -126,8 +126,8 @@ int story__page = 0;
 int story__dead = 0;
 void story() {
     if (intro__dead == 1) {
-//        story__dead = 1;
-//        return; //  : skip intro
+        story__dead = 1;
+        return; //  : skip intro
 
         story__local_ticks++;
 

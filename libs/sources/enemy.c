@@ -33,15 +33,16 @@ struct enemy_stats getSlimeStats() {
 
 struct enemy_stats getBossStats() {
     struct skills test = {
-        .skill_name = "테스트 스킬",
-        .skill_mp_cost = 10,
-        .skill_damage = 20
+        .skill_name = "데몬 슬레이어",
+        .skill_mp_cost = 0,
+        .skill_damage = 50,
+        .skill_heal = 0
     };
 
     struct enemy_stats boss = {
             .enemy_name = "마왕",
             .character_symbol = "◈",
-            .color = RED | WHITE,
+            .color = YELLOW,
             .ascii_art = {
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        ⢢⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⡜",
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣷⣄",

@@ -4,6 +4,7 @@ struct skills {
     char skill_name[20];
     int skill_mp_cost;
     int skill_damage;
+    int skill_heal;
 };
 
 struct enemy_stats {

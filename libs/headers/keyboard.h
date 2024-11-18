@@ -11,6 +11,7 @@
 #define KEY_B 66
 #define KEY_CHEAT_MODE 92
 #define KEY_NULL 0
+#define KEY_ESCAPE 27
 /* in game inputs */
 
 struct Key {

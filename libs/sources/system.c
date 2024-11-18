@@ -84,6 +84,7 @@ int arrayUtf8Strlen(char *str[]) {
         size++;
     }
 
+//    printfInInformationBox(0, "[Debug] size: %d", size);
     int total_length = 0;
     for (int i = 0; i < size; i++) {
         total_length += (int) utf8Strlen(str[i]);

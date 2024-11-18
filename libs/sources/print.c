@@ -90,6 +90,7 @@ void clearConsoleArea(HANDLE screen, struct Point start, struct Point end) {
 
     for (int i = 0; i < y; i++) {
         gotoXY(screen, start.x, start.y + i);
+        resetColor(screen);
         WriteFile(screen, empty[i], x, NULL, NULL);
     }
 }
@@ -258,12 +259,19 @@ void printContinueAction(int y) {
 }
 
 int selectedIndex = 0;
-int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count) {
+int printSelectAction(int type, struct Point startPos, struct Point endPos, int gap, char* str[], int count, int escape) {
     // check if screen is reserved
     if (isReservedScreenBufferByHANDLE(getCurrentScreenBuffer())) return -1;
 
+    str[count] = NULL; // add NULL to the end of the array
+
+//    printfInInformationBox(0, "[Debug] arrayUtf8Strlen(str) : %d", arrayUtf8Strlen(str));
+//    printfInInformationBox(0, "[Debug] str[2] : %s", str[2]);
+
     int delay = 0;
     int delay_ticks = 500;
+
+    selectedIndex = 0;
 
     struct Point clearPosStart;
     struct Point clearPosEnd;
@@ -284,6 +292,11 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
                 } else if (keyData.key == KEY_ENTER && keyData.isPressed) {
                     clearConsoleArea(getCurrentScreenBuffer(), clearPosStart, clearPosEnd);
                     return 1;
+                } else if (escape && keyData.key == KEY_ESCAPE && keyData.isPressed) {
+//                    printfInInformationBox(1, "[!] 선택을 취소합니다.");
+                    clearConsoleArea(getCurrentScreenBuffer(), clearPosStart, clearPosEnd);
+                    selectedIndex = -1;
+                    return 1;
                 }
             } else if (type == 2) { // vertical
                 if (keyData.key == KEY_UP && keyData.isPressed) {
@@ -297,6 +310,11 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
                 } else if (keyData.key == KEY_ENTER && keyData.isPressed) {
                     clearConsoleArea(getCurrentScreenBuffer(), clearPosStart, clearPosEnd);
                     return 1;
+                } else if (escape && keyData.key == KEY_ESCAPE && keyData.isPressed) {
+//                    printfInInformationBox(1, "[!] 선택을 취소합니다.");
+                    clearConsoleArea(getCurrentScreenBuffer(), clearPosStart, clearPosEnd);
+                    selectedIndex = -1;
+                    return 1;
                 }
             }
         }
@@ -305,7 +323,7 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
 
         if (type == 1) { // horizontal
             int len = arrayUtf8Strlen(str) + (gap * (count - 1));
-//            printfInInformationBox(0, "[Debug] len: %d", arrayUtf8Strlen(str));
+//            printfInInformationBox(0, "[Debug] len: %d", len);
             char* temp = (char *) malloc(len + 1);
             if (temp == NULL) return -1;
 

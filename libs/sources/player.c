@@ -13,25 +13,43 @@ int *foughtSlimes = NULL;
 int *foughtBosses = NULL;
 
 void initPlayer() {
+    struct skills skill1 = {
+            .skill_name = "성스러운 칼",
+            .skill_damage = 30,
+            .skill_mp_cost = 30,
+            .skill_heal = 0
+    };
+
+    struct skills skill2 = {
+            .skill_name = "단결된 의지",
+            .skill_damage = 0,
+            .skill_mp_cost = 15,
+            .skill_heal = 15
+    };
+
     strcpy(player.character_symbol, "웃");
     player.max_hp = 70;
-    player.hp_plus_per_level = 10; // max hp = 70 + 10 * 5 = 120
+    player.hp_plus_per_level = 10; // max hp = 70 + 10 * 6 = 130
 
     player.max_mp = 30;
-    player.mp_plus_per_level = 5; // max mp = 30 + 5 * 5 = 55
+    player.mp_plus_per_level = 5; // max mp = 30 + 5 * 6 = 60
 
     player.atk = 8;
-    player.atk_plus_per_level = 2; // max atk = 8 + 2 * 5 = 18
+    player.atk_plus_per_level = 2; // max atk = 8 + 2 * 6 = 20
 
     player.def = 5;
-    player.def_plus_per_level = 1; // max def = 5 + 1 * 5 = 10
+    player.def_plus_per_level = 1; // max def = 5 + 1 * 6 = 11
 
     player.level = 1;
-    player.max_level = 5;
+    player.max_level = 6;
 
     player.critical_chance = 5;
     player.critical_plus_per_level = 1; // max critical chance = 5 + 1 * 5 = 10
     player.critical_damage_multiplier = 2;
+
+    player.skill_count = 2;
+    player.skill[0] = skill1;
+    player.skill[1] = skill2;
 }
 
 void createPlayer(int mapNum, struct Point pos) {
@@ -83,7 +101,7 @@ void levelUp() {
 
 }
 
-void fightEnemy(struct enemy_stats enemy) {
+int fightEnemy(struct enemy_stats enemy) {
     skipAbleSleep(1000);
     setPlayerMove(0);
     player_fight = 1;
@@ -121,12 +139,14 @@ void fightEnemy(struct enemy_stats enemy) {
         int damage = 0;
         if (turn == 0) {
             printfInInformationBox(0, "[!] '플레이어'의 턴입니다.");
+
+            returnSelectP:
             if (printSelectAction(HORIZONTAL,
                                   (struct Point) { 0, 33 },
                                   (struct Point) { 50, 40 },
                                   9,
-                                  (char *[]) {"공격", "스킬"},
-                                  2)) {
+                                  (char *[]) {"공격", "스킬", NULL},
+                                  2, FALSE)) {
                 switch (selectedIndex) {
                     case 0:
                         printfInInformationBox(0, "[!] '플레이어'가 '%s'을(를) 공격합니다.", enemy.enemy_name);
@@ -140,9 +160,22 @@ void fightEnemy(struct enemy_stats enemy) {
                         }
                         break;
                     case 1:
-                        printfInInformationBox(1, "[!] '플레이어'가 '스킬'을 사용했습니다.");
-                        skipAbleSleep(1000);
-                        // TODO: Add skill
+                        if (printSelectAction(HORIZONTAL,
+                                              (struct Point) { 0, 33 },
+                                              (struct Point) { 50, 40 },
+                                                      7,
+                                              (char *[]) { player.skill[0].skill_name, player.skill[1].skill_name, NULL },
+                                              2, TRUE)) {
+                            switch (selectedIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    break;
+                                default:
+//                                    printfInInformationBox(3, "[!] 잘못된 선택입니다. 다시 선택해주세요.");
+                                    goto returnSelectP;
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -184,6 +217,12 @@ void fightEnemy(struct enemy_stats enemy) {
                         printfInInformationBox(1, "[!] '%s'이(가) '%s'을(를) 사용했습니다.", enemy.enemy_name,
                                                enemy.skill[randomSkills].skill_name);
                         skipAbleSleep(1000);
+
+                        if (enemy.skill[randomSkills].skill_heal != 0) {
+                            enemy_hp += enemy.skill[randomSkills].skill_heal;
+                            printfInInformationBox(2, "[!] '%s'이(가) %d만큼 회복했습니다. ['%s'의 남은 체력: %d]", enemy.enemy_name, enemy.skill[randomSkills].skill_heal, enemy.enemy_name, enemy_hp);
+                            skipAbleSleep(1000);
+                        }
                         goto attackEnemy;
                     }
                 }
@@ -243,7 +282,7 @@ void fightEnemy(struct enemy_stats enemy) {
             printfXY(getCurrentScreenBuffer(), temp_pos.x, temp_pos.y, "  ");
             foughtSlimes[getIndexFromSlimePos((struct Point) { temp_pos.x, temp_pos.y })] = 1;
             setPlayerMove(1);
-            break;
+            return 1;
         }
 
         if (player_hp <= 0) {
@@ -251,7 +290,7 @@ void fightEnemy(struct enemy_stats enemy) {
             sprintf(reason, "'%s'에게 패배했습니다.", enemy.enemy_name);
 
             playerDead(reason);
-            break;
+            return 0;
         }
     }
 }
@@ -264,6 +303,7 @@ void playerDead(char* reason) {
     skipAbleSleep(1000);
     clearScreenBufferByIndex(getCurrentScreenBufferIndex());
     refreshScreenBuffer();
+    refreshInformationBox();
 
     printContinueAction(31);
     printfInInformationBox(1, "게임을 종료합니다.");
@@ -280,6 +320,7 @@ void gameClear() {
     clearScreenBufferByIndex(getNextScreenBufferIndex());
     printfCenter(getNextScreenBuffer(), 13, "대충 스토리");
     switchNextScreenBuffer();
+    refreshInformationBox();
     skipAbleSleep(1000);
 
     printContinueAction(31);
@@ -329,16 +370,15 @@ int movePlayer(int direction) {
             fightEnemy(getSlimeStats());
             return 0;
         case 3: // boss
-            for (int i = 0; i < slimeCount; i++) {
-                if (foughtSlimes[i] == 0) {
-                    printfInInformationBox(3, "[!] 슬라임을 모두 물리치지 않았습니다.");
-                    return 0;
-                }
-            }
+//            for (int i = 0; i < slimeCount; i++) {
+//                if (foughtSlimes[i] == 0) {
+//                    printfInInformationBox(3, "[!] 슬라임을 모두 물리치지 않았습니다.");
+//                    return 0;
+//                }
+//            }
 
             printfInInformationBox(0, "[!] 마왕을 만났습니다.");
-            fightEnemy(getBossStats());
-            gameClear();
+            if (fightEnemy(getBossStats())) gameClear();
             return 0;
         case 4: // move another map
             printfInInformationBox(0, "[!] 다음 맵으로 이동합니다.");
