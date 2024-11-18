@@ -469,12 +469,12 @@ int movePlayer(int direction) {
             fightEnemy(getSlimeStats());
             return 0;
         case 3: // boss
-//            for (int i = 0; i < slimeCount; i++) {
-//                if (foughtSlimes[i] == 0) {
-//                    printfInInformationBox(3, "[!] 슬라임을 모두 물리치지 않았습니다.");
-//                    return 0;
-//                }
-//            }
+            for (int i = 0; i < slimeCount; i++) {
+                if (foughtSlimes[i] == 0) {
+                    printfInInformationBox(3, "[!] 슬라임을 모두 물리치지 않았습니다.");
+                    return 0;
+                }
+            }
 
             printfInInformationBox(0, "[!] 마왕을 만났습니다.");
             if (fightEnemy(getBossStats())) gameClear();
