@@ -6,6 +6,9 @@
 
 #define buffer_size 1024
 
+#define console_width 160
+#define console_height 43
+
 struct Point getPrintCenter(char *str, ...);
 struct Point getPrintCenterByPos(struct Point startPos, struct Point endPos, char *str, ...);
 unsigned long long utf8Strlen(const char* str);

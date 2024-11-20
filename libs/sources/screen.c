@@ -61,6 +61,12 @@ void initScreenBuffer(int cursorVisibility) {
         screenBuffer[i] = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER,
                                                     NULL);
         SetConsoleCursorInfo(screenBuffer[i], &cursorInfo);
+
+        // disable line wrap
+        DWORD console_mode;
+        GetConsoleMode(screenBuffer[i], &console_mode);
+        SetConsoleMode(screenBuffer[i], console_mode & ~ENABLE_WRAP_AT_EOL_OUTPUT);
+        SetConsoleScreenBufferSize(screenBuffer[i], (COORD) { console_width, console_height });
     }
 
     SetConsoleActiveScreenBuffer(screenBuffer[0]);

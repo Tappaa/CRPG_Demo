@@ -24,9 +24,12 @@ void ExitGame() {
 int main() {
     setRandomSeed(time(NULL));
 
+    WCHAR title[50] = { 0 };
+    swprintf(title, sizeof(title) / sizeof(WCHAR), L"C-RPG | 알파 테스트 | v%s", game_version);
+
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
-    system("mode con cols=160 lines=43 | title \"C-RPG | Alpha Test\"");
+    SetConsoleTitleW(title);
 
     // init screen buffer
     initScreenBuffer(0);

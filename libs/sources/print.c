@@ -298,8 +298,8 @@ int printSelectAction(int type, struct Point startPos, struct Point endPos, int 
     int isStay = 0;
     selectedIndex = 0;
 
-    struct Point clearPosStart;
-    struct Point clearPosEnd;
+    struct Point clearPosStart = { 0, 0 };
+    struct Point clearPosEnd = { 0, 0 };
 
     while (1) {
         if (delay > 0) delay--;

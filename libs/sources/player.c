@@ -31,8 +31,8 @@ void playerStatusUpdate(int hp, int mp) {
 
     clearConsoleArea(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
 
-    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 32 }, (struct Point) { e.x, 32 }, "체력 : ■■■■■■■■■■ (%d/%d)", hp, player.max_hp);
-    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 33 }, (struct Point) { e.x, 33 }, "마나 : ■■■■■■■■■■ (%d/%d)", mp, player.max_mp);
+    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 32 }, (struct Point) { e.x, 32 }, "체력 : ■■■■■■■■■■ (%02d/%02d)", hp, player.max_hp);
+    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 33 }, (struct Point) { e.x, 33 }, "마나 : ■■■■■■■■■■ (%02d/%02d)", mp, player.max_mp);
 
     int hp_bar = (int) ((double) hp / player.max_hp * 10);
     int mp_bar = (int) ((double) mp / player.max_mp * 10);
@@ -42,7 +42,7 @@ void playerStatusUpdate(int hp, int mp) {
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "공격력 : %d", player.atk);
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "방어력 : %d", player.def);
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "크리티컬 확률 : %d%%", player.critical_chance);
-    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "레벨 : %d", player.level);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "레벨 : %d LV", player.level);
 
     setColor(getCurrentScreenBuffer(), BLACK, RED);
     for (int i = 0; i < hp_bar; i++) {
@@ -53,7 +53,7 @@ void playerStatusUpdate(int hp, int mp) {
         HP = printfXY(getCurrentScreenBuffer(), HP.x, HP.y, "■");
     }
 
-    printfXY(getCurrentScreenBuffer(), HP.x, HP.y, " (%d/%d)", hp, player.max_hp);
+    printfXY(getCurrentScreenBuffer(), HP.x, HP.y, " (%02d/%02d)", hp, player.max_hp);
 
     setColor(getCurrentScreenBuffer(), BLACK, BLUE);
     for (int i = 0; i < mp_bar; i++) {
@@ -65,7 +65,7 @@ void playerStatusUpdate(int hp, int mp) {
     }
     resetColor(getCurrentScreenBuffer());
 
-    printfXY(getCurrentScreenBuffer(), MP.x, MP.y, " (%d/%d)", mp, player.max_mp);
+    printfXY(getCurrentScreenBuffer(), MP.x, MP.y, " (%02d/%02d)", mp, player.max_mp);
 }
 
 void skillStatusUpdate(int index) {
@@ -202,6 +202,13 @@ int fightEnemy(struct enemy_stats enemy) {
         printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
     }
     resetColor(getCurrentScreenBuffer());
+
+    // enemy status update
+    enemy.hp += enemy.hp_per_level * (player.level - 1);
+    enemy.mp += enemy.mp_per_level * (player.level - 1);
+    enemy.atk += enemy.atk_per_level * (player.level - 1);
+    enemy.def += enemy.def_per_level * (player.level - 1);
+    // enemy status update
 
     player_hp = player.max_hp;
     player_mp = player.max_mp;

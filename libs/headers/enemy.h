@@ -13,9 +13,16 @@ struct enemy_stats {
     char character_symbol[5];
     char ascii_art[30][150];
     int hp;
+    int hp_per_level;
+
     int mp;
+    int mp_per_level;
+
     int atk;
+    int atk_per_level;
+
     int def;
+    int def_per_level;
 
     int skill_count;
     struct skills skill[5];

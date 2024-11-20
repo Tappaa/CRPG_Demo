@@ -24,8 +24,13 @@ struct enemy_stats getSlimeStats() {
                     "⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠛⠛⠛⠛⠛⠛⠻⠿⠿⠿⠷⠶⠶⠶⠶⠶⢿⣿⣿⡿⠿⠿⠿⠿⠟⠛⠛⠛⠋"
             },
             .hp = 25,
-            .atk = 7,
-            .def = 2
+            .hp_per_level = 5,
+
+            .atk = 6,
+            .atk_per_level = 2,
+
+            .def = 2,
+            .def_per_level = 1,
     };
 
     return slime;
