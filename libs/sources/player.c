@@ -31,22 +31,18 @@ void playerStatusUpdate(int hp, int mp) {
 
     clearConsoleArea(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
 
-    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 32 }, (struct Point) { e.x, 32 }, "체력 : ■■■■■■■■■■");
-    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 33 }, (struct Point) { e.x, 33 }, "마나 : ■■■■■■■■■■");
-    struct Point ATK = getPrintCenterByPos((struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "공격력 : %d", player.atk);
-    struct Point DEF = getPrintCenterByPos((struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "방어력 : %d", player.def);
-    struct Point CRIT = getPrintCenterByPos((struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "크리티컬 확률 : %d%%", player.critical_chance);
-    struct Point LV = getPrintCenterByPos((struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "레벨 : %d", player.level);
+    struct Point HP = getPrintCenterByPos((struct Point) { s.x, 32 }, (struct Point) { e.x, 32 }, "체력 : ■■■■■■■■■■ (%d/%d)", hp, player.max_hp);
+    struct Point MP = getPrintCenterByPos((struct Point) { s.x, 33 }, (struct Point) { e.x, 33 }, "마나 : ■■■■■■■■■■ (%d/%d)", mp, player.max_mp);
 
     int hp_bar = (int) ((double) hp / player.max_hp * 10);
     int mp_bar = (int) ((double) mp / player.max_mp * 10);
 
     HP = printfXY(getCurrentScreenBuffer(), HP.x, HP.y, "체력 : ");
     MP = printfXY(getCurrentScreenBuffer(), MP.x, MP.y, "마나 : ");
-    printfXY(getCurrentScreenBuffer(), ATK.x, ATK.y, "공격력 : %d", player.atk);
-    printfXY(getCurrentScreenBuffer(), DEF.x, DEF.y, "방어력 : %d", player.def);
-    printfXY(getCurrentScreenBuffer(), CRIT.x, CRIT.y, "크리티컬 확률 : %d%%", player.critical_chance);
-    printfXY(getCurrentScreenBuffer(), LV.x, LV.y, "레벨 : %d", player.level);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 35 }, (struct Point) { e.x, 35 }, "공격력 : %d", player.atk);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 36 }, (struct Point) { e.x, 36 }, "방어력 : %d", player.def);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 37 }, (struct Point) { e.x, 37 }, "크리티컬 확률 : %d%%", player.critical_chance);
+    printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 38 }, (struct Point) { e.x, 38 }, "레벨 : %d", player.level);
 
     setColor(getCurrentScreenBuffer(), BLACK, RED);
     for (int i = 0; i < hp_bar; i++) {
@@ -57,6 +53,8 @@ void playerStatusUpdate(int hp, int mp) {
         HP = printfXY(getCurrentScreenBuffer(), HP.x, HP.y, "■");
     }
 
+    printfXY(getCurrentScreenBuffer(), HP.x, HP.y, " (%d/%d)", hp, player.max_hp);
+
     setColor(getCurrentScreenBuffer(), BLACK, BLUE);
     for (int i = 0; i < mp_bar; i++) {
         MP = printfXY(getCurrentScreenBuffer(), MP.x, MP.y, "■");
@@ -66,6 +64,8 @@ void playerStatusUpdate(int hp, int mp) {
         MP = printfXY(getCurrentScreenBuffer(), MP.x, MP.y, "■");
     }
     resetColor(getCurrentScreenBuffer());
+
+    printfXY(getCurrentScreenBuffer(), MP.x, MP.y, " (%d/%d)", mp, player.max_mp);
 }
 
 void skillStatusUpdate(int index) {
@@ -75,11 +75,12 @@ void skillStatusUpdate(int index) {
     };
 
     struct Point e = {
-            .x = 100,
+            .x = 90,
             .y = 40
     };
 
     clearConsoleArea(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
+    printEdgeLines(getCurrentScreenBuffer(), (struct Point) { s.x + 1, s.y + 1 }, (struct Point) { e.x - 1, e.y - 1 });
 
     setColor(getCurrentScreenBuffer(), GRAY, BLACK);
     printfAreaCenter(getCurrentScreenBuffer(), (struct Point) { s.x, 32 }, (struct Point) { e.x, 33 }, "스킬 : %s", player.skill[index].skill_name);
@@ -253,6 +254,7 @@ int fightEnemy(struct enemy_stats enemy) {
                                               7,
                                               (char *[]) { player.skill[0].skill_name, player.skill[1].skill_name, NULL },
                                               2, TRUE, skillStatusUpdate)) {
+                            playerStatusUpdate(player_hp, player_mp);
                             switch (selectedIndex) {
                                 case 0:
                                 case 1:
