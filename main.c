@@ -24,12 +24,14 @@ void ExitGame() {
 int main() {
     setRandomSeed(time(NULL));
 
-    WCHAR title[50] = { 0 };
-    swprintf(title, sizeof(title) / sizeof(WCHAR), L"C-RPG | 알파 테스트 | v%s", game_version);
+    char title[50] = { 0 };
+    sprintf(title, "C-RPG | 알파 테스트 | v%s", game_version);
 
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
-    SetConsoleTitleW(title);
+    SetConsoleTitle(title);
+    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &((SMALL_RECT) { 0, 0, console_width - 1, console_height - 1 }));
+    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD) { console_width, console_height });
 
     // init screen buffer
     initScreenBuffer(0);
