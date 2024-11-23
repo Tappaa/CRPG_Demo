@@ -32,10 +32,10 @@ int main() {
     SetConsoleCP(65001);
     SetConsoleTitle(title);
 
-    if (!SetConsoleScreenBufferSize(hConsole, (COORD) { console_width, console_height })) {
+    if (!SetConsoleScreenBufferSize(hConsole, console_buffer_size)) {
         printfInInformationBox(3, "콘솔창 버퍼 크기 변경에 실패했습니다. 오류 코드: %d", GetLastError());
     }
-    if (!SetConsoleWindowInfo(hConsole, TRUE, &((SMALL_RECT) { 0, 0, console_height - 1, console_width - 1 }))) {
+    if (!SetConsoleWindowInfo(hConsole, TRUE, &console_windows_size)) {
         printfInInformationBox(3, "콘솔창 크기 변경에 실패했습니다. 오류 코드: %d", GetLastError());
     }
 

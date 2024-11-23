@@ -6,8 +6,8 @@
 
 #define buffer_size 1024
 
-#define console_width 160
-#define console_height 43
+extern COORD console_buffer_size;
+extern SMALL_RECT console_windows_size;
 
 struct Point getPrintCenter(char *str, ...);
 struct Point getPrintCenterByPos(struct Point startPos, struct Point endPos, char *str, ...);

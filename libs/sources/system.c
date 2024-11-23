@@ -1,5 +1,8 @@
 #include "../manager.h"
 
+COORD console_buffer_size = { 160, 43 };
+SMALL_RECT console_windows_size = { 0, 0, 159, 42 };
+
 /// @Note : Point y is not used (it returns 0)
 struct Point getPrintCenter(char *str, ...) {
     struct Point size = getConsoleSize();

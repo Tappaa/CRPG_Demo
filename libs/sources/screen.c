@@ -66,8 +66,8 @@ void initScreenBuffer(int cursorVisibility) {
         DWORD console_mode;
         GetConsoleMode(screenBuffer[i], &console_mode);
         SetConsoleMode(screenBuffer[i], console_mode & ~ENABLE_WRAP_AT_EOL_OUTPUT);
-        SetConsoleScreenBufferSize(screenBuffer[i], (COORD) { console_height, console_width });
-        SetConsoleWindowInfo(screenBuffer[i], TRUE, &((SMALL_RECT) { 0, 0, console_width - 1, console_height - 1 }));
+        SetConsoleScreenBufferSize(screenBuffer[i], console_buffer_size);
+        SetConsoleWindowInfo(screenBuffer[i], TRUE, &console_windows_size);
     }
 
     SetConsoleActiveScreenBuffer(screenBuffer[0]);
