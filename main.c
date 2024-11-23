@@ -22,6 +22,7 @@ void ExitGame() {
 }
 
 int main() {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     setRandomSeed(time(NULL));
 
     char title[50] = { 0 };
@@ -30,8 +31,13 @@ int main() {
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
     SetConsoleTitle(title);
-    SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, &((SMALL_RECT) { 0, 0, console_width - 1, console_height - 1 }));
-    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), (COORD) { console_width, console_height });
+
+    if (!SetConsoleScreenBufferSize(hConsole, (COORD) { console_width, console_height })) {
+        printfInInformationBox(3, "콘솔창 버퍼 크기 변경에 실패했습니다. 오류 코드: %d", GetLastError());
+    }
+    if (!SetConsoleWindowInfo(hConsole, TRUE, &((SMALL_RECT) { 0, 0, console_height - 1, console_width - 1 }))) {
+        printfInInformationBox(3, "콘솔창 크기 변경에 실패했습니다. 오류 코드: %d", GetLastError());
+    }
 
     // init screen buffer
     initScreenBuffer(0);
