@@ -457,7 +457,13 @@ void gameClear() {
     printfInInformationBox(3, "[!] 게임을 클리어했습니다. 축하합니다!");
     skipAbleSleep(1000);
     clearScreenBufferByIndex(getNextScreenBufferIndex());
-    printfCenter(getNextScreenBuffer(), 13, "대충 스토리");
+    printfCenter(getNextScreenBuffer(), 13, "전투의 절정에서 렌은 자신의 무기가 빛을 발하는 것을 느꼈다.");
+    printfCenter(getNextScreenBuffer(), 14, "그건 마을 사람들의 희망과 응원이 깃든 힘이었다.");
+    printfCenter(getNextScreenBuffer(), 15, "렌은 마지막 일격으로 마왕의 심장을 정확히 겨냥해 무기를 내리꽂았다.");
+    printfCenter(getNextScreenBuffer(), 16, "마왕은 땅으로 떨어지며 그의 영혼은 사라졌다.");
+    printfCenter(getNextScreenBuffer(), 17, "마을 사람들은 렌을 환영하며 마을로 돌아가도록 했다.");
+    printfCenter(getNextScreenBuffer(), 18, "렌은 마을로 돌아가며 마을 사람들과 함께 행복한 시간을 보냈다.");
+    printfCenter(getNextScreenBuffer(), 19, "그리고 마을 사람들은 렌을 영웅으로 기억했다.");
     switchNextScreenBuffer();
     refreshInformationBox();
     skipAbleSleep(1000);

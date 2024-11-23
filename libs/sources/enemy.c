@@ -27,7 +27,7 @@ struct enemy_stats getSlimeStats() {
             .hp_per_level = 5,
 
             .atk = 6,
-            .atk_per_level = 2,
+            .atk_per_level = 4,
 
             .def = 2,
             .def_per_level = 1,
