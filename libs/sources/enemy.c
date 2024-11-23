@@ -32,7 +32,7 @@ struct enemy_stats getSlimeStats() {
             .def = 2,
             .def_per_level = 1,
 
-            .miss_chance = 5,
+            .miss_chance = 3,
     };
 
     return slime;
@@ -86,7 +86,7 @@ struct enemy_stats getBossStats() {
             .skill_count = 1,
             .skill = { test },
 
-            .miss_chance = 7,
+            .miss_chance = 5,
     };
 
     return boss;

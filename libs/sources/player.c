@@ -101,8 +101,8 @@ void initPlayer() {
     player.max_hp = 35;
     player.hp_plus_per_level = 15; // max hp = 30 + 15 * 6 = 130
 
-    player.max_mp = 30;
-    player.mp_plus_per_level = 5; // max mp = 30 + 5 * 6 = 60
+    player.max_mp = 45;
+    player.mp_plus_per_level = 5; // max mp = 45 + 5 * 6 = 75
 
     player.atk = 8;
     player.atk_plus_per_level = 2; // max atk = 8 + 2 * 6 = 20
@@ -129,7 +129,7 @@ void initPlayer() {
             .skill_name = "단결된 의지",
             .skill_damage = 0,
             .skill_mp_cost = 10,
-            .skill_heal = 25,
+            .skill_heal = 40,
             .minimum_level = 3
     };
 
@@ -137,7 +137,7 @@ void initPlayer() {
     player.skill[0] = skill1;
     player.skill[1] = skill2;
 
-    player.miss_chance = 3;
+    player.miss_chance = 4;
 }
 
 void createPlayer(int mapNum, struct Point pos) {
@@ -267,15 +267,15 @@ int fightEnemy(struct enemy_stats enemy) {
                             switch (selectedIndex) {
                                 case 0:
                                 case 1:
-                                    if (player.skill[selectedIndex].skill_mp_cost > player_mp) {
-                                        printfInInformationBox(3, "[!] 마나가 부족합니다.");
+                                    if (player.skill[selectedIndex].minimum_level > player.level) {
+                                        printfInInformationBox(3, "[!] 레벨이 부족합니다.");
                                         skipAbleSleep(1000);
                                         playerStatusUpdate(player_hp, player_mp);
                                         goto returnAttackSelectP;
                                     }
 
-                                    if (player.skill[selectedIndex].minimum_level > player.level) {
-                                        printfInInformationBox(3, "[!] 레벨이 부족합니다.");
+                                    if (player.skill[selectedIndex].skill_mp_cost > player_mp) {
+                                        printfInInformationBox(3, "[!] 마나가 부족합니다.");
                                         skipAbleSleep(1000);
                                         playerStatusUpdate(player_hp, player_mp);
                                         goto returnAttackSelectP;
@@ -336,7 +336,7 @@ int fightEnemy(struct enemy_stats enemy) {
             printfInInformationBox(0, "[!] '%s'의 턴입니다.", enemy.enemy_name);
             skipAbleSleep(2000);
             if (enemy.skill_count != 0) {
-                if (rand() % 5 == 0) {
+                if (rand() % 10 == 0) {
                     renewSkill:
 
                     int randomSkills = rand() % enemy.skill_count;
