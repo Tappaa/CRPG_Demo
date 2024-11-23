@@ -136,6 +136,8 @@ void initPlayer() {
     player.skill_count = 2;
     player.skill[0] = skill1;
     player.skill[1] = skill2;
+
+    player.miss_chance = 3;
 }
 
 void createPlayer(int mapNum, struct Point pos) {
@@ -303,24 +305,29 @@ int fightEnemy(struct enemy_stats enemy) {
                         break;
                 }
 
-                if (damage < 0) damage = 0;
-                if (damage > 0) {
-                    // GUI effect
-                    setColor(getCurrentScreenBuffer(), BLACK, RED);
-                    for (int i = 0; i < 20; i++) {
-                        printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
-                    }
-                    resetColor(getCurrentScreenBuffer());
-                    skipAbleSleep(250);
-                    setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
-                    for (int i = 0; i < 20; i++) {
-                        printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
-                    }
-                    resetColor(getCurrentScreenBuffer());
-                    // GUI effect
 
-                    enemy_hp -= damage;
-                    printfInInformationBox(2, "[!] '%s'에게 %d의 피해를 입혔습니다. ['%s'의 남은 체력 : %d]", enemy.enemy_name, damage, enemy.enemy_name, enemy_hp);
+                if (!missCheckEnemy(enemy)) {
+                    if (damage < 0) damage = 0;
+                    if (damage > 0) {
+                        // GUI effect
+                        setColor(getCurrentScreenBuffer(), BLACK, RED);
+                        for (int i = 0; i < 20; i++) {
+                            printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
+                        }
+                        resetColor(getCurrentScreenBuffer());
+                        skipAbleSleep(250);
+                        setColor(getCurrentScreenBuffer(), BLACK, enemy.color);
+                        for (int i = 0; i < 20; i++) {
+                            printfXY(getCurrentScreenBuffer(), center.x, i + 5, enemy.ascii_art[i]);
+                        }
+                        resetColor(getCurrentScreenBuffer());
+                        // GUI effect
+
+                        enemy_hp -= damage;
+                        printfInInformationBox(2, "[*] '%s'에게 %d의 피해를 입혔습니다. ['%s'의 남은 체력 : %d]", enemy.enemy_name, damage, enemy.enemy_name, enemy_hp);
+                    }
+                } else {
+                    printfInInformationBox(3, "[X] '플레이어'의 공격이 빗나갔습니다.");
                 }
                 skipAbleSleep(2000);
                 turn = (turn + 1) % 2;
@@ -356,7 +363,6 @@ int fightEnemy(struct enemy_stats enemy) {
             printfInInformationBox(1, "[!] '%s'이(가) '플레이어'를 공격합니다.", enemy.enemy_name);
             skipAbleSleep(1000);
             damage = enemy.atk - player.def;
-            if (damage < 0) damage = 0;
 
             if (criticalCheckEnemy(enemy)) {
                 damage *= enemy.critical_damage_multiplier;
@@ -365,33 +371,38 @@ int fightEnemy(struct enemy_stats enemy) {
             }
 
             attackEnemy:
-            if (damage > 0) {
-                // GUI effect
-                setColor(getCurrentScreenBuffer(), BLACK, RED);
-                printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
+            if (!missCheck()) {
+                if (damage < 0) damage = 0;
+                if (damage > 0) {
+                    // GUI effect
+                    setColor(getCurrentScreenBuffer(), BLACK, RED);
+                    printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
 
-                for (int i = 1; i < getConsoleSize().x - 1; i++) {
-                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
+                    for (int i = 1; i < getConsoleSize().x - 1; i++) {
+                        printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
+                    }
+
+                    for (int i = 31; i < 40; i++) {
+                        printfXY(getCurrentScreenBuffer(), 50, i, "│");
+                    }
+                    resetColor(getCurrentScreenBuffer());
+                    skipAbleSleep(250);
+                    printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
+
+                    for (int i = 1; i < getConsoleSize().x - 1; i++) {
+                        printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
+                    }
+
+                    for (int i = 31; i < 40; i++) {
+                        printfXY(getCurrentScreenBuffer(), 50, i, "│");
+                    }
+                    // GUI effect
+
+                    player_hp -= damage;
+                    printfInInformationBox(2, "[*] '플레이어'에게 %d의 피해를 입혔습니다. ['플레이어'의 남은 체력: %d]", damage, player_hp);
                 }
-
-                for (int i = 31; i < 40; i++) {
-                    printfXY(getCurrentScreenBuffer(), 50, i, "│");
-                }
-                resetColor(getCurrentScreenBuffer());
-                skipAbleSleep(250);
-                printEdgeLines(getCurrentScreenBuffer(), zz, (struct Point) { getConsoleSize().x - 1, getAvailableConsoleHeight() + 1 });
-
-                for (int i = 1; i < getConsoleSize().x - 1; i++) {
-                    printfXY(getCurrentScreenBuffer(), i, getAvailableConsoleHeight() - 9, "─");
-                }
-
-                for (int i = 31; i < 40; i++) {
-                    printfXY(getCurrentScreenBuffer(), 50, i, "│");
-                }
-                // GUI effect
-
-                player_hp -= damage;
-                printfInInformationBox(2, "[!] '플레이어'에게 %d의 피해를 입혔습니다. ['플레이어'의 남은 체력: %d]", damage, player_hp);
+            } else {
+                printfInInformationBox(3, "[X] '%s'의 공격이 빗나갔습니다.", enemy.enemy_name);
             }
             skipAbleSleep(2000);
             turn = (turn + 1) % 2;
@@ -564,4 +575,10 @@ int criticalCheck() {
 //    printfInInformationBox(0, "[Debug] random: %d, player.critical_chance: %d", random, player.critical_chance);
 
     return random <= player.critical_chance;
+}
+
+int missCheck() {
+    int random = (rand() % 100) + 1;
+
+    return random <= player.miss_chance;
 }

@@ -24,6 +24,8 @@ struct player_stats {
 
     int skill_count;
     struct skills skill[5];
+
+    int miss_chance;
 };
 
 extern struct player_stats player;
@@ -48,3 +50,4 @@ int isPlayerDead(); // return 1 if player is dead, 0 if not
 int isPlayerFight(); // return 1 if player is fighting, 0 if not
 int canPlayerMove(); // return 1 if player can move, 0 if not
 int criticalCheck(); // return 1 if critical hit, 0 if not
+int missCheck(); // return 1 if miss, 0 if not

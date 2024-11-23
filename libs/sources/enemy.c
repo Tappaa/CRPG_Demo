@@ -31,6 +31,8 @@ struct enemy_stats getSlimeStats() {
 
             .def = 2,
             .def_per_level = 1,
+
+            .miss_chance = 5,
     };
 
     return slime;
@@ -82,7 +84,9 @@ struct enemy_stats getBossStats() {
             .def = 10,
 
             .skill_count = 1,
-            .skill = { test }
+            .skill = { test },
+
+            .miss_chance = 7,
     };
 
     return boss;
@@ -106,4 +110,10 @@ int criticalCheckEnemy(struct enemy_stats enemy) {
     int random = (rand() % 100) + 1;
 
     return random <= enemy.critical_chance;
+}
+
+int missCheckEnemy(struct enemy_stats enemy) {
+    int random = (rand() % 100) + 1;
+
+    return random <= enemy.miss_chance;
 }

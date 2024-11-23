@@ -30,6 +30,8 @@ struct enemy_stats {
     int critical_chance;
     int critical_damage_multiplier;
 
+    int miss_chance;
+
     int color;
 };
 
@@ -39,3 +41,4 @@ struct enemy_stats getBossStats();
 int asciiArtLength(struct enemy_stats enemy);
 
 int criticalCheckEnemy(struct enemy_stats enemy);
+int missCheckEnemy(struct enemy_stats enemy);
